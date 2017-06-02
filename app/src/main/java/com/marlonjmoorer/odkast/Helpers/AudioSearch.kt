@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.Uri
 import com.google.api.client.util.Base64
 import com.google.gson.GsonBuilder
+import com.marlonjmoorer.odkast.Models.PodcastChart
+import com.marlonjmoorer.odkast.Models.Show
+import com.marlonjmoorer.odkast.Models.ShowSearchResult
 import com.marlonjmoorer.odkast.Models.TrendingPodcast
 import com.marlonjmoorer.odkast.R
 import org.json.JSONArray
@@ -28,6 +31,16 @@ public class  AudioSearch private constructor(context: Context)  {
                     .authority("www.audiosear.ch")
                     .build()
     }
+
+    inline fun baseApiUrl(body: (u:Uri.Builder)->Uri.Builder):String{
+        var uri=Uri.Builder()
+                .scheme("https")
+                .authority("www.audiosear.ch")
+                .appendPath("api")
+                .appendQueryParameter("access_token",token)
+       return body(uri).build().toString()
+    }
+
 
 
 
@@ -77,12 +90,14 @@ public class  AudioSearch private constructor(context: Context)  {
     }
 
     fun GetTrendingPodcast(): List<TrendingPodcast> {
-          var url= baseUrl?.buildUpon()
+         /* var url= baseUrl?.buildUpon()
                   ?.appendPath("api")
                   ?.appendPath("trending")
                   ?.appendQueryParameter("access_token",token)
                   ?.build()
-                  ?.toString()
+                  ?.toString()*/
+
+           var url= baseApiUrl { it.appendEncodedPath("trending") }
 
             var json =URL(url).readText()
 
@@ -91,10 +106,37 @@ public class  AudioSearch private constructor(context: Context)  {
         var jsonArray=JSONArray(json)
         for (i in 0..jsonArray.length()-1){
 
-            output.add(gson.fromJson(jsonArray.getJSONObject(i).toString(),TrendingPodcast::class.java))
+            output.add(Util.parseJson<TrendingPodcast>(jsonArray.getString(i).toString()))
         }
         return  output
     }
+
+    fun GetTopShows2():List<Show>{
+
+        var url= baseApiUrl { it.appendEncodedPath("chart_daily") }
+        var json =URL(url).readText()
+        var ids=Util.parseJson<PodcastChart>(json).shows.values.map{it.id}
+
+        var shows=Util.parseJson<PodcastChart>(json).shows.values.map {this.GetShowById(it.id)}
+        return shows//gson.fromJson(json,PodcastChart::class.java)
+    }
+    fun GetTopShows():ShowSearchResult{
+        var url= baseApiUrl { it.appendEncodedPath("chart_daily") }
+        var json =URL(url).readText()
+        var query= Util.parseJson<PodcastChart>(json).shows.values.map{"id:${it.id}"}.joinToString()
+        url= baseApiUrl { it.appendPath("search").appendPath("shows").appendPath("$query") }
+        json =URL(url).readText()
+
+        return Util.parseJson<ShowSearchResult>(json)
+    }
+    fun GetShowById(id:Int):Show{
+        var url= baseApiUrl { it.appendEncodedPath("shows").appendPath("$id") }
+        var json =URL(url).readText()
+
+
+        return   Util.parseJson<Show>(json)
+    }
+
 
     fun getAuthToken(): String? {
         val prefs = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)

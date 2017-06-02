@@ -3,7 +3,7 @@ package com.marlonjmoorer.odkast.Adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
-import com.marlonjmoorer.odkast.Fragments.TopFragment
+import com.marlonjmoorer.odkast.Fragments.TopShowsFragment
 import com.marlonjmoorer.odkast.Fragments.TrendingFragment
 
 /**
@@ -12,24 +12,25 @@ import com.marlonjmoorer.odkast.Fragments.TrendingFragment
 class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     var manager:FragmentManager;
-    init {
-        this.manager=fm;
+    var fragments= mapOf(
+            "Trending" to TrendingFragment(),
+            "Top" to TopShowsFragment()
 
+            )
+
+    init {
+        this.manager=fm
     }
 
-    override fun getItem(position: Int): Fragment = when(position){
-
-        0-> TrendingFragment()
-        1-> TopFragment()
-        else -> TrendingFragment()
-
+    override fun getItem(position: Int): Fragment {
+      return this.fragments.values.elementAt(position)
     }
 
     override fun getCount(): Int {
-        return 2
+        return this.fragments.count()
     }
 
     override fun getPageTitle(position: Int): CharSequence {
-        return "DOPE"
+        return this.fragments.keys.elementAt(position)
     }
 }

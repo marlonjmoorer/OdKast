@@ -1,5 +1,7 @@
 package com.marlonjmoorer.odkast.Adapters
 
+import android.text.Html
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseExpandableListAdapter
@@ -32,14 +34,38 @@ class TrendingListAdapter(podcast:List<TrendingPodcast?>):BaseExpandableListAdap
     }
 
     override fun getGroupView(groupPosition: Int, isExpanded: Boolean, convertView: View?, parent: ViewGroup?): View {
-      return  with(parent!!.context){
-          verticalLayout {
+        var pc=podcast[groupPosition]!!
+
+        return  with(parent!!.context){
+          linearLayout {
+
+
               textView {
-                  text= podcast[groupPosition]?.trend
+                  gravity= Gravity.CENTER_VERTICAL
+                  text= Html.fromHtml("<a href=${pc.twitter_url} >${pc.trend}</a>") //podcast[groupPosition]?.trend
+                  //movementMethod=LinkMovementMethod.getInstance()
+
+              }.lparams{
+                  height= matchParent
+                  width=0
+                  weight=5F
               }
-              textView {
-                  text= podcast[groupPosition]?.twitter_url
+              imageView {
+                  imageResource= if(isExpanded) android.R.drawable.arrow_up_float else android.R.drawable.arrow_down_float
+                  adjustViewBounds=true
+                  scaleType= ImageView.ScaleType.CENTER_INSIDE
+              }.lparams{
+                  width=0
+                  weight=1F
               }
+
+              lparams {
+                  height = dip(48)
+                  width = matchParent
+                  //paddingLeft = dip(24)
+                  //paddingRight = dip(24)
+              }
+              setPadding(dip(24),0,dip(24),0)
           }
       }
     }

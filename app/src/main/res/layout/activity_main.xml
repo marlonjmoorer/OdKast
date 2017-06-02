@@ -7,7 +7,7 @@
     tools:context="com.marlonjmoorer.odkast.MainActivity">
 
         <android.support.v7.widget.Toolbar
-
+            android:background="@color/colorPrimaryDark"
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize">
@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:id="@+id/tabs"
             android:elevation="6dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="@color/colorPrimary"
             android:minHeight="?attr/actionBarSize"
             android:layout_below="@+id/toolbar">
 

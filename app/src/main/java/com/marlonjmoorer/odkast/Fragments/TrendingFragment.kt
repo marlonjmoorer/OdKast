@@ -10,13 +10,11 @@ import com.marlonjmoorer.odkast.Adapters.TrendingListAdapter
 import com.marlonjmoorer.odkast.Helpers.AudioSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
 import com.marlonjmoorer.odkast.R
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.find
+import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onGroupCollapse
 import org.jetbrains.anko.sdk25.coroutines.onGroupExpand
 import org.jetbrains.anko.sdk25.coroutines.onItemClick
 import org.jetbrains.anko.support.v4.longToast
-import org.jetbrains.anko.uiThread
 
 
 /**
@@ -27,8 +25,21 @@ class TrendingFragment: Fragment() {
 
     var _view:View?=null
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        _view= inflater?.inflate(R.layout.fragment_trending,container,false)
+        _view= getUI(container!!)
         return _view
+    }
+
+    fun getUI(viewGroup: ViewGroup):View= with(viewGroup){
+        linearLayout {
+           lparams(width = matchParent,height = matchParent)
+            expandableListView{
+               id=R.id.listview
+               setGroupIndicator(null)
+            }.lparams{
+               width = matchParent
+               height = matchParent
+            }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

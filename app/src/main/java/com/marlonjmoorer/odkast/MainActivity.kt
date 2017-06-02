@@ -8,8 +8,6 @@ import android.support.v7.widget.Toolbar
 import com.marlonjmoorer.odkast.Adapters.HomeAdapter
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.uiThread
 
 
 
@@ -44,25 +42,19 @@ class MainActivity : AppCompatActivity() {
 
         var viewPager= find<ViewPager>(R.id.viewpager)
         var tabLayout= find<TabLayout>(R.id.tabs)
+
         viewPager.adapter= HomeAdapter(supportFragmentManager)
+
+
         tabLayout.setupWithViewPager(viewPager)
 
-        doAsync (exceptionHandler =  { throwable : Throwable ->
-            throwable.printStackTrace()
+        doAsync {
 
-        }){
-
-
-
-            uiThread {
-
-              //  Log.d("Request", result)
-
-                longToast("Request performed")
-
-            }
+          //  var test=AudioSearch.getInstance(this@MainActivity).GetTopShows()
+          //  var i=test.hashCode()
 
         }
+
 
     }
 
