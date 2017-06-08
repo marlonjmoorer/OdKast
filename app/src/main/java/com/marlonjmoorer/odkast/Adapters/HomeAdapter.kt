@@ -13,9 +13,8 @@ class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     var manager:FragmentManager;
     var fragments= mapOf(
-            "Trending" to TrendingFragment(),
-            "Top" to TopShowsFragment()
-
+            "Top" to TopShowsFragment(),
+            "Trending" to TrendingFragment()
             )
 
     init {

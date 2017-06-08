@@ -4,10 +4,7 @@ import android.content.Context
 import android.net.Uri
 import com.google.api.client.util.Base64
 import com.google.gson.GsonBuilder
-import com.marlonjmoorer.odkast.Models.PodcastChart
-import com.marlonjmoorer.odkast.Models.Show
-import com.marlonjmoorer.odkast.Models.ShowSearchResult
-import com.marlonjmoorer.odkast.Models.TrendingPodcast
+import com.marlonjmoorer.odkast.Models.*
 import com.marlonjmoorer.odkast.R
 import org.json.JSONArray
 import org.json.JSONObject
@@ -66,7 +63,7 @@ public class  AudioSearch private constructor(context: Context)  {
 
     }
 
-    fun generateToken():String{
+   private  fun generateToken():String{
         var client_id= context.resources.getString(R.string.api_key)
         var client_secret= context.resources.getString(R.string.api_secret)
         var uri= Uri.Builder()
@@ -136,8 +133,28 @@ public class  AudioSearch private constructor(context: Context)  {
 
         return   Util.parseJson<Show>(json)
     }
+    fun GetEpisodesByShowId(id: Int):EpisodeSearchResult{
+        var url= baseApiUrl {
+            it.appendPath("search")
+            .appendPath("episodes")
+            .appendPath("*")
+            .appendQueryParameter("filters[show_id]","$id")
+        }
+        var json =URL(url).readText()
 
+        //search/episodes
+        return   Util.parseJson<EpisodeSearchResult>(json)
+    }
+    fun GetEpisodeById(id:Int):Episode{
+        var url= baseApiUrl {
+            it.appendPath("episodes")
+                    .appendPath("$id")
+        }
+        var json =URL(url).readText()
 
+        //search/episodes
+        return   Util.parseJson<Episode>(json)
+    }
     fun getAuthToken(): String? {
         val prefs = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE)
         var token =prefs.getString(TOKEN_KEY,"")

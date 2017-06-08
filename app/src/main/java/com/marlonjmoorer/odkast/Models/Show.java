@@ -38,7 +38,7 @@ public class Show {
     private String sc_feed;
     private WebProfilesBean web_profiles;
     private List<String> categories;
-    private List<ImageFilesBean> image_files;
+    public List<ImageFilesBean> image_files;
     private List<Integer> episode_ids;
 
     public int getId() {

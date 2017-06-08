@@ -9,12 +9,12 @@ import android.widget.GridView
 import com.marlonjmoorer.odkast.Adapters.PodcastGridAdapter
 import com.marlonjmoorer.odkast.Helpers.AudioSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
-import com.marlonjmoorer.odkast.MainActivity
 import com.marlonjmoorer.odkast.Models.ShowSearchResult
 import com.marlonjmoorer.odkast.R
+import com.marlonjmoorer.odkast.ShowDetailActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.sdk25.coroutines.onItemClick
-import org.jetbrains.anko.support.v4.startActivity
+import org.jetbrains.anko.support.v4.startActivityForResult
 
 
 /**
@@ -31,6 +31,7 @@ class TopShowsFragment : Fragment() {
     private fun getUI(container: ViewGroup): View? =with(container){
         linearLayout {
             lparams(width = matchParent,height = matchParent)
+
             gridView{
                 id=  R.id.gridview
                numColumns=2
@@ -54,7 +55,7 @@ class TopShowsFragment : Fragment() {
                 grid.adapter = PodcastGridAdapter(searchResult)
                 grid.onItemClick { parent, view, position, id ->
                    var show= grid.adapter.getItem(position) as ShowSearchResult.ResultsBean
-                    this@TopShowsFragment.startActivity<MainActivity>("id" to show.id)
+                    this@TopShowsFragment.startActivityForResult<ShowDetailActivity>(0,ShowDetailActivity.id_key to show.id)
                 }
             }
         }
