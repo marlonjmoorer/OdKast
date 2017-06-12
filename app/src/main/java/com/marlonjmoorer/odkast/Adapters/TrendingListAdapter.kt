@@ -1,6 +1,5 @@
 package com.marlonjmoorer.odkast.Adapters
 
-import android.text.Html
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +41,7 @@ class TrendingListAdapter(podcast:List<TrendingPodcast?>):BaseExpandableListAdap
 
               textView {
                   gravity= Gravity.CENTER_VERTICAL
-                  text= Html.fromHtml("<a href=${pc.twitter_url} >${pc.trend}</a>") //podcast[groupPosition]?.trend
+                  text=pc.trend
                   //movementMethod=LinkMovementMethod.getInstance()
 
               }.lparams{

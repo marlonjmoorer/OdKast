@@ -4,6 +4,8 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.drawable.BitmapDrawable
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.IBinder
 import android.support.design.widget.TabLayout
@@ -11,10 +13,7 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import com.marlonjmoorer.odkast.Adapters.HomeAdapter
 import com.marlonjmoorer.odkast.Helpers.*
 import com.marlonjmoorer.odkast.Services.MediaService
@@ -28,21 +27,23 @@ import java.util.*
 
 
 class MainActivity : AppCompatActivity(), Observer {
+
+
     override fun update(o: Observable?, arg: Any?) {
         var playBtn= find<Button>(R.id.ep_play)
         var mp_play= find<Button>(R.id.mp_play)
-
 
         if(o is MediaService.MediaObservable){
 
             if(o.IsPlaying) {
 
-                playBtn.backgroundResource = R.drawable.icons8_circled_pause_filled
-                mp_play.backgroundResource = R.drawable.icons8_circled_pause_filled
+                playBtn.backgroundResource = R.drawable.icons8_pause_filled
+                mp_play.backgroundResource = R.drawable.icons8_pause_filled
+                startSeekBar()
             }
             else {
-                playBtn.backgroundResource=R.drawable.icons8_circled_play_filled
-                mp_play.backgroundResource=R.drawable.icons8_circled_play_filled
+                playBtn.backgroundResource=R.drawable.icons8_play_filled
+                mp_play.backgroundResource=R.drawable.icons8_play_filled
             }
 
 
@@ -54,44 +55,74 @@ class MainActivity : AppCompatActivity(), Observer {
     private var header:LinearLayout?=null
     private  var mediaService:MediaService?=null
     private  var mediaOverservable:MediaService.MediaObservable?=null
+    private  var seekBar:SeekBar?=null
+    private  var mediaPlayer:MediaPlayer?=null
+    private  var elapsedText:TextView?=null
+    private  var durationText:TextView?=null
 
 
-     companion object{
 
-        var ACTION="com.marlonjmoorer.odkast"
-
-     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        var toolbar = find<Toolbar>(R.id.toolbar)
-        var viewPager = find<ViewPager>(R.id.viewpager)
-        var tabLayout = find<TabLayout>(R.id.tabs)
-        mini_player= find<LinearLayout>(R.id.mini_player)
-        header= find<LinearLayout>(R.id.header)
-
-        setSupportActionBar(toolbar)
-        slidePanel = find<SlidingUpPanelLayout>(R.id.sliding_layout)
-
-        viewPager.adapter = HomeAdapter(supportFragmentManager)
-        tabLayout.setupWithViewPager(viewPager)
-
-        slidePanel?.addPanelSlideListener(object :SlidingUpPanelLayout.PanelSlideListener{
 
 
-            override fun onPanelSlide(panel: View?, slideOffset: Float) {
-                mini_player?.fade(1-(slideOffset))
-                header!!.fade(slideOffset)
+        if (intent?.hasExtra("ep_id") == true) {
+            this.setUpPlayback(intent?.getIntExtra("ep_id", 0)!!)
+            slidePanel?.expand()
+        }else {
 
-            }
 
-            override fun onPanelStateChanged(panel: View?, previousState: PanelState?, newState: PanelState?) {
+            var toolbar = find<Toolbar>(R.id.toolbar)
+            var viewPager = find<ViewPager>(R.id.viewpager)
+            var tabLayout = find<TabLayout>(R.id.tabs)
+            mini_player = find<LinearLayout>(R.id.mini_player)
+            header = find<LinearLayout>(R.id.header)
+            seekBar = find<SeekBar>(R.id.seekBar);
+            elapsedText = find<TextView>(R.id.elapsed)
+            durationText = find<TextView>(R.id.duration)
 
-            }
-        })
+            setSupportActionBar(toolbar)
+            slidePanel = find<SlidingUpPanelLayout>(R.id.sliding_layout)
 
+            viewPager.adapter = HomeAdapter(supportFragmentManager)
+            tabLayout.setupWithViewPager(viewPager)
+
+            slidePanel?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
+
+
+                override fun onPanelSlide(panel: View?, slideOffset: Float) {
+                    mini_player?.fade(1 - (slideOffset))
+                    header!!.fade(slideOffset)
+
+                }
+
+                override fun onPanelStateChanged(panel: View?, previousState: PanelState?, newState: PanelState?) {
+
+                }
+            })
+
+            seekBar?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+                    if (fromUser) {
+                        mediaPlayer?.let { it.seekTo(progress) }
+                        elapsedText?.text = progress.toTime()
+                    }
+
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+                }
+            })
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -101,10 +132,6 @@ class MainActivity : AppCompatActivity(), Observer {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-
-    }
 
     override fun onStart() {
         super.onStart()
@@ -126,7 +153,7 @@ class MainActivity : AppCompatActivity(), Observer {
 
     private fun setUpPlayback(id: Int) {
 
-        var poster = find<ImageView>(R.id.poster)
+        //var poster = find<ImageView>(R.id.poster)
         with(AudioSearch.getInstance(this)) {
             doAsync(asycHandler()) {
 
@@ -142,19 +169,27 @@ class MainActivity : AppCompatActivity(), Observer {
                 }
                 val bitmap = Picasso.with(this@MainActivity).load(poster_url).get();
                 uiThread {
-                    poster.loadUrl(poster_url)
+                   // poster.loadUrl(poster_url)
                     find<ImageView>(R.id.mp_poster)?.loadUrl(poster_url)
                     find<TextView>(R.id.mp_title)?.text=ep.title
                     find<TextView>(R.id.mp_show_title)?.text=ep.show_title
                     find<TextView>(R.id.ep_title)?.text= ep.title
+                    find<LinearLayout>(R.id.background).backgroundDrawable= BitmapDrawable(bitmap)
 
-                    //startService<MediaService>()
-                   // startService(Intent(this@MainActivity, MediaService::class.java))
+
                     var media = MediaService.MediaObject(ep.digital_location,bitmap,ep.title,ep.show_title)
                     mediaService?.setMedia(media)
-                   // MediaService.play_pause()
+                    seekBar!!.max=mediaPlayer?.duration!!
+                    elapsedText?.text=(0 as Int).toTime()
+                    durationText?.text=mediaPlayer?.duration!!.toTime()
+
                     var playBtn= find<Button>(R.id.ep_play)
-                    playBtn.backgroundResource=R.drawable.icons8_circled_pause_filled
+                    var play_button_mini=find<Button>(R.id.mp_play)
+
+
+                    play_button_mini.onClick {
+                        mediaService?.play_pause()
+                    }
                     playBtn.onClick {
                        mediaService?.play_pause()
                     }
@@ -164,18 +199,39 @@ class MainActivity : AppCompatActivity(), Observer {
 
     }
 
+    fun startSeekBar()= doAsync(asycHandler()) {
+
+            while (mediaPlayer?.isPlaying!!){
+
+                try {
+                    Thread.sleep(1000)
+                } catch (e: InterruptedException) {
+
+                    e.printStackTrace()
+                }
+                uiThread {
+
+                    seekBar?.setProgress(mediaPlayer?.getCurrentPosition()?:0)
+                    elapsedText?.text= "${mediaPlayer?.getCurrentPosition()?.toTime()}"
+                    //seekBar?.setProgress(mediaPlayer?.getCurrentPosition()?:0)
+                    //elapsedText?.text= mediaPlayer?.getCurrentPosition()?.toTime()
+                    //toast("Nope")
+                }
+
+            }
+    }
+
+
 
     private val musicConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as MusicBinder
-            //get service
+
              mediaService = binder.service
-             mediaOverservable= mediaService!!.IsPlayingObservable
-             mediaOverservable?.addObserver(this@MainActivity)
-            //pass list
-            //musicSrv.setList(songList)
-          //  musicBound = true
+             mediaService!!.IsPlayingObservable?.addObserver(this@MainActivity)
+             mediaPlayer= binder.mediaPlayer
+
         }
 
         override fun onServiceDisconnected(name: ComponentName) {

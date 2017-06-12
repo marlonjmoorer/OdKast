@@ -12,6 +12,11 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import com.squareup.picasso.OkHttpDownloader
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.concurrent.TimeUnit
+
 
 /**
  * Created by marlonmoorer on 6/3/17.
@@ -28,6 +33,22 @@ fun ImageView.loadUrl(url: String) {
 
 
 }
+fun String.toDate():Date?{
+    val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    val date: Date
+    try {
+        date = df.parse(this)
+        return date
+    }catch(ex:ParseException){
+        return null
+    }
+
+}
+fun Date.toDateString():String{
+    val df = SimpleDateFormat("EEE, MMM dd, yyyy")
+    return df.format(this)
+}
+
 fun SlidingUpPanelLayout.expand(){
     this.panelState=PanelState.EXPANDED
 }
@@ -97,4 +118,28 @@ fun View.fadeIn(){
                 }
             });
 
+}
+
+fun Int.toShortTime():String{
+    val millis=this.toLong()
+   return  String.format("%01d:%02d:%02d",
+            TimeUnit.SECONDS.toHours(millis),
+            TimeUnit.SECONDS.toMinutes(millis) -
+                    TimeUnit.HOURS.toMinutes(TimeUnit.SECONDS.toHours(millis)), // The change is in this line
+            TimeUnit.SECONDS.toSeconds(millis) -
+                    TimeUnit.MINUTES.toSeconds(TimeUnit.SECONDS.toMinutes(millis)));
+}
+fun Int.toTime():String{
+
+    val millis=this.toLong()
+    val buf = StringBuffer()
+
+    buf
+            .append(String.format("%02d", millis / (1000 * 60 * 60)))
+            .append(":")
+            .append(String.format("%02d", millis % (1000 * 60 * 60) / (1000 * 60)))
+            .append(":")
+            .append(String.format("%02d", millis % (1000 * 60 * 60) % (1000 * 60) / 1000))
+
+    return buf.toString()
 }

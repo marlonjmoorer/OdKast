@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <item name="gridview" type="id" />
+    <item name="show_image" type="id">1234</item>
+    <item name="show_title" type="id" >1235</item>
+    <item name="show_discription" type="id" />
 </resources>

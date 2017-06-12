@@ -20,21 +20,19 @@ import java.util.*
 /**
  * Created by marlonmoorer on 6/4/17.
  */
-class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener{
+class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
 
 
      val IsPlayingObservable:MediaObservable= MediaObservable()
+
 
 
     override fun onError(mp: MediaPlayer?, what: Int, extra: Int): Boolean {
       return true
     }
 
-    override fun onBufferingUpdate(mp: MediaPlayer?, percent: Int) {
-       // TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
 
-    private var mediaPlayer: MediaPlayer? = null
+    var mediaPlayer: MediaPlayer? = null
     private var nowPlaying:MediaObject?=null
 
 
@@ -44,7 +42,7 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
-        mp?.start()
+        play_pause()
     }
 
     override fun onCreate() {
@@ -78,12 +76,16 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             }
         }
         IsPlayingObservable.emitChange()
+       updateNotification()
+    }
+
+    fun updateNotification(){
         val mNotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(1, buildNotification())
+        mNotificationManager.notify(NOTIFICATION_ID, buildNotification())
     }
 
     fun showNotification(){
-        startForeground(1, buildNotification())
+        startForeground(NOTIFICATION_ID, buildNotification())
     }
     fun hideNotification(){
         stopForeground(true)
@@ -95,10 +97,14 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
         if(intent?.action==null && mediaPlayer==null) {
             mediaPlayer = MediaPlayer().apply() {
-                setOnBufferingUpdateListener(this@MediaService)
+
                 setOnPreparedListener(this@MediaService)
                 setOnErrorListener(this@MediaService)
                 setAudioStreamType(AudioManager.STREAM_MUSIC);
+                setOnCompletionListener {
+                    IsPlayingObservable.emitChange()
+                    updateNotification()
+                }
             }
         }else{
             handleIntent(intent!!)
@@ -174,11 +180,14 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         private val FF="FF"
         private val RR="RR"
         private val STOP="STOP"
+        private val NOTIFICATION_ID=1337
     }
 
     inner class MusicBinder : Binder() {
         internal val service: MediaService
             get() = instance!!
+        internal val mediaPlayer:MediaPlayer
+            get()= instance?.mediaPlayer!!
     }
 
     data class MediaObject(val url:String,val image:Bitmap,val title:String, val subTitle:String){}

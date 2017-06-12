@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:titleTextColor="@color/white"
+
     tools:context="com.marlonjmoorer.odkast.MainActivity">
 
     <com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -12,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="bottom"
-        android:background="@color/accent"
+
         sothree:umanoPanelHeight="68dp"
         sothree:umanoShadowHeight="4dp">
         <RelativeLayout
@@ -23,7 +25,10 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorPrimaryDark">
+                style="@style/Base_ToolbarStyle"
+
+                >
+
 
             </android.support.v7.widget.Toolbar>
 
@@ -37,6 +42,7 @@
                 android:minHeight="?attr/actionBarSize"
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:tabMode="fixed">
+
 
 
             </android.support.design.widget.TabLayout>

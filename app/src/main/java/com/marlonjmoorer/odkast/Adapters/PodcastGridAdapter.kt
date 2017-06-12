@@ -1,13 +1,15 @@
 package com.marlonjmoorer.odkast.Adapters
 
+
+import android.graphics.Bitmap
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.marlonjmoorer.odkast.Helpers.loadUrl
 import com.marlonjmoorer.odkast.Models.ShowSearchResult
 import com.marlonjmoorer.odkast.R
+import com.squareup.picasso.Picasso
 import org.jetbrains.anko.*
 
 
@@ -29,8 +31,12 @@ class PodcastGridAdapter(result: ShowSearchResult) : BaseAdapter() {
         if (convertView == null) {
 
             holder = ViewHolderItem()
+            doAsync {
+                holder.bitMap= Picasso.with(parent?.context).load(show.image_files[0].file.url).get();
+            }
 
             var _view = with(parent!!.context) {
+
                 verticalLayout {
                     lparams {
                         height = dip(250)
@@ -38,7 +44,8 @@ class PodcastGridAdapter(result: ShowSearchResult) : BaseAdapter() {
                     }
                     frameLayout {
                         holder.thumbnail = imageView {
-                            loadUrl(show.image_files[0].file.url)
+                            //loadUrl(show.image_files[0].file.url)
+                            setImageBitmap(holder.bitMap)
                             adjustViewBounds = true
                             scaleType = ImageView.ScaleType.FIT_XY
                         }.lparams {
@@ -46,31 +53,26 @@ class PodcastGridAdapter(result: ShowSearchResult) : BaseAdapter() {
                             width = matchParent
                         }
 
+
+
                     }.lparams {
                         height = 0
                         width = matchParent
                         weight = 5f
                     }
                     linearLayout {
-                        setBackgroundColor(resources.getColor(R.color.colorAccent))
+                        setBackgroundColor(resources.getColor(R.color.black))
                         holder.title = textView {
                             text = show.title
                             textColor = resources.getColor(R.color.white)
+                            //textSize=dip(16).toFloat()
                             maxLines = 3
                         }.lparams {
                             margin = dip(16)
                             width = 0
                             weight = 4F
+
                         }
-                        /*imageView {
-                            imageResource= android.R.drawable.btn_plus
-                            adjustViewBounds=true
-                            scaleType= ImageView.ScaleType.CENTER_INSIDE
-                        }.lparams{
-                            margin=dip(16)
-                            width=0
-                            weight=1F
-                        }*/
 
                     }.lparams {
                         height = dip(48)
@@ -87,7 +89,8 @@ class PodcastGridAdapter(result: ShowSearchResult) : BaseAdapter() {
             return _view
         } else {
             holder=convertView.tag as ViewHolderItem
-            holder.thumbnail?.loadUrl(show.image_files[0].file.url)
+           // holder.thumbnail?.loadUrl(show.image_files[0].file.url)
+           holder.thumbnail?.setImageBitmap(holder.bitMap)
             holder.title?.text= show.title
             return convertView!!
         }
@@ -111,6 +114,7 @@ class PodcastGridAdapter(result: ShowSearchResult) : BaseAdapter() {
 internal class ViewHolderItem {
     var title: TextView? = null
     var thumbnail: ImageView? = null
+    var bitMap:Bitmap?=null
 }
 
 
