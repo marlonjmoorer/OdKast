@@ -17,9 +17,18 @@ class Util{
            var gson = GsonBuilder().create()
            return gson.fromJson<T>(json)
        }
+
+
    }
 }
-
+fun Any.toJsonString():String{
+    var gson = GsonBuilder().create()
+    return gson.toJson(this)
+}
+inline fun <reified T:Any>String.parseTo():T{
+    var gson = GsonBuilder().create()
+    return gson.fromJson<T>(this)
+}
 
 fun asycHandler()={ throwable : Throwable ->
     Log.e("ASYNC",throwable.message)

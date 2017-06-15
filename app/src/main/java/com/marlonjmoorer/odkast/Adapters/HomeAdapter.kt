@@ -13,6 +13,7 @@ class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     var manager:FragmentManager;
     var fragments= mapOf(
+            "Subscription" to TrendingFragment(),
             "Top" to TopShowsFragment(),
             "Trending" to TrendingFragment()
             )
@@ -26,7 +27,7 @@ class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     }
 
     override fun getCount(): Int {
-        return this.fragments.count()
+        return this.fragments.values.count()
     }
 
     override fun getPageTitle(position: Int): CharSequence {

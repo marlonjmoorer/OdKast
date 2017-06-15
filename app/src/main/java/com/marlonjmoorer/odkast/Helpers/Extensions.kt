@@ -27,7 +27,13 @@ fun ImageView.loadUrl(url: String) {
     var builder =  Picasso.Builder(context);
 
     builder.downloader(OkHttpDownloader(context));
-    builder.build().load(url).into(this);
+    try {
+        builder.build().load(url).into(this);
+    }
+    catch (ex:Exception){
+        print(ex.stackTrace.contentDeepToString())
+    }
+
     //  var ur=url.replace("https","http")
     //Picasso.with(this.context)
 
@@ -56,24 +62,38 @@ fun SlidingUpPanelLayout.collapse(){
     this.panelState=PanelState.COLLAPSED
 }
 fun View.loadUrl(url:String){
-    var builder =  Picasso.Builder(context);
 
-    builder.downloader(OkHttpDownloader(context));
-    builder.build().load(url).into(object: Target {
+    var target = object: Target {
         override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
             //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onBitmapFailed(errorDrawable: Drawable?) {
-            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            background=null
         }
 
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-            this@loadUrl.background = BitmapDrawable(bitmap)
+            background = BitmapDrawable(bitmap)
             //  this@loadUrl.
+
         }
 
-    });
+    }
+
+
+
+    var builder =  Picasso.Builder(context);
+
+
+    builder.downloader(OkHttpDownloader(context));
+    try {
+        builder.build().load(url).into(target);
+    }
+    catch (ex:Exception){
+        print(ex.stackTrace.contentDeepToString())
+    }
+
+
 
 }
 

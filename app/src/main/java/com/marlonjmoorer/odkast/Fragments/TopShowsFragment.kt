@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.marlonjmoorer.odkast.Adapters.ShowListAdapter
 import com.marlonjmoorer.odkast.Helpers.AudioSearch
+import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -48,8 +49,8 @@ class TopShowsFragment : Fragment() {
 
         doAsync(asycHandler()){
 
-            var ai=AudioSearch.getInstance(context)
-            var searchResult= ai.GetTopShows()
+            //var ai=AudioSearch.getInstance(context)
+            var searchResult=  PodcastSearch().GetTopPodcast() //ai.GetTopShows()
             uiThread {
 
                 showListView?.adapter = ShowListAdapter(searchResult)//PodcastGridAdapter(searchResult)

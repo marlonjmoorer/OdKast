@@ -4,4 +4,5 @@
     <item name="show_image" type="id">1234</item>
     <item name="show_title" type="id" >1235</item>
     <item name="show_discription" type="id" />
+    <item name="overflow_menu" type="id" />
 </resources>

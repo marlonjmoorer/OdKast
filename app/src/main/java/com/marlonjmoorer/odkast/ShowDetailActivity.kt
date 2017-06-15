@@ -1,6 +1,5 @@
 package com.marlonjmoorer.odkast
 
-import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -14,11 +13,13 @@ import android.widget.ListView
 import android.widget.RelativeLayout
 import android.widget.TextView
 import com.marlonjmoorer.odkast.Adapters.EpisodeListAdapter
-import com.marlonjmoorer.odkast.Helpers.AudioSearch
+import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
 import com.marlonjmoorer.odkast.Helpers.loadUrl
+import com.marlonjmoorer.odkast.Helpers.toJsonString
 import com.marlonjmoorer.odkast.Models.EpisodeSearchResult
-import com.marlonjmoorer.odkast.Models.Show
+import com.marlonjmoorer.odkast.Models.PodcastFeed
+import com.marlonjmoorer.odkast.Models.SearchResults
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.floatingActionButton
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -26,7 +27,7 @@ import org.jetbrains.anko.sdk25.coroutines.onItemClick
 
 class ShowDetailActivity : AppCompatActivity() {
 
-    var show: Show? = null
+    var show:SearchResults.ResultItem? = null
 
     companion object {
         val id_key = "id_key"
@@ -45,31 +46,26 @@ class ShowDetailActivity : AppCompatActivity() {
 
             var id = intent.getIntExtra(id_key, -1)
             doAsync(asycHandler()) {
-                var ai = AudioSearch.getInstance(this@ShowDetailActivity)
-                show = ai.GetShowById(id)
-                var episodes = ai.GetEpisodesByShowId(id)
+                //var ai = AudioSearch.getInstance(this@ShowDetailActivity)
+                show = PodcastSearch().GetShowById(id) //ai.GetShowById(id)
+                var feed=   PodcastSearch().getPodcastFeed(show?.feedUrl!!)
+
 
                 uiThread {
 
-                    image.loadUrl(show?.image_files?.first()?.url?.full!!)
+                    image.loadUrl(show?.artworkUrl600!!)
 
-                    episodeListView.adapter = EpisodeListAdapter(episodes)
+                    episodeListView.adapter = EpisodeListAdapter(feed)
 
                     episodeListView.onItemClick { parent, view, position, id ->
 
-                        var episode = parent?.getItemAtPosition(position) as EpisodeSearchResult.ResultsBean
+                        var episode = parent?.getItemAtPosition(position) as PodcastFeed.EpisodeItem
 
                         //showDetails(episode)
                         buidDialog(episode).show()
-                        //var intent = Intent()
-                        //intent.putExtra("ep_id", episode.id)
-                        //setResult(Activity.RESULT_OK, intent)
-                        //finish()
-
-
                     }
-                    title.text = show?.title
-                    description.text = show?.description
+                    title.text = show?.collectionName
+                    description.text = Html.fromHtml(feed.feed.description)
                     loadingView.visibility = View.GONE
                 }
 
@@ -167,21 +163,22 @@ class ShowDetailActivity : AppCompatActivity() {
         }.show()
     }
 
-    fun buidDialog(episode: EpisodeSearchResult.ResultsBean): Dialog {
+    fun buidDialog(episode: PodcastFeed.EpisodeItem): Dialog {
         var dialog = Dialog(this@ShowDetailActivity)
 
         with(dialog) {
-            setContentView(R.layout.episode_detail)
+            setContentView(R.layout.episode_detail_old)
             find<TextView>(R.id.detail_title).text = episode.title
             find<TextView>(R.id.detail_description).text = Html.fromHtml(episode.description)
-            find<ImageView>(R.id.detail_image).loadUrl(episode.image_urls.thumb)
+            find<ImageView>(R.id.detail_image).loadUrl(episode.thumbnail)
             find<FloatingActionButton>(R.id.detail_play).onClick {
                 dismiss()
-                var intent = Intent()
-                intent.putExtra("ep_id", episode.id)
-                setResult(Activity.RESULT_OK, intent)
-                finish()
-                //finishAffinity()
+                var intent = Intent(this@ShowDetailActivity,MainActivity::class.java)
+                intent.putExtra("ep",episode.toJsonString())
+                intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                //setResult(Activity.RESULT_OK, intent)
+                //finish()
+                startActivity(intent)
 
             }
         }

@@ -6,24 +6,26 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import com.marlonjmoorer.odkast.Helpers.loadUrl
-import com.marlonjmoorer.odkast.Helpers.toDate
-import com.marlonjmoorer.odkast.Helpers.toDateString
 import com.marlonjmoorer.odkast.Helpers.toShortTime
-import com.marlonjmoorer.odkast.Models.EpisodeSearchResult
+import com.marlonjmoorer.odkast.Models.PodcastFeed
 import com.marlonjmoorer.odkast.R
 import org.jetbrains.anko.*
 
 /**
  * Created by marlonmoorer on 6/2/17.
  */
-class EpisodeListAdapter(result:EpisodeSearchResult):BaseAdapter() {
+class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
 
-    var result:EpisodeSearchResult?=null
+    var feed:PodcastFeed?=null
+
     init {
-        this.result=result
+        this.feed=feed
     }
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        var episode= result?.results!![position]
+        var episode= feed?.items!![position]
+       if(episode.thumbnail.isNullOrEmpty()){
+           episode.thumbnail=feed?.feed?.image!!
+       }
        return  with(parent!!.context){
            linearLayout {
                //setBackgroundColor(resources.getColor(R.color.colorAccent))
@@ -31,7 +33,7 @@ class EpisodeListAdapter(result:EpisodeSearchResult):BaseAdapter() {
                 frameLayout {
 
                     imageView {
-                        loadUrl(episode.image_urls.thumb)
+                        loadUrl(episode.thumbnail)
                         adjustViewBounds=true
                         scaleType= ImageView.ScaleType.FIT_XY
 
@@ -55,7 +57,7 @@ class EpisodeListAdapter(result:EpisodeSearchResult):BaseAdapter() {
                        weight=1f
                    }
                    textView {
-                       text=episode.updated_at.toDate()?.toDateString()
+                       text=episode.pubDate
                    }.lparams {
                        width= matchParent
                        height=0
@@ -74,7 +76,7 @@ class EpisodeListAdapter(result:EpisodeSearchResult):BaseAdapter() {
                    textView {
                        text
                        textColor=resources.getColor(R.color.colorAccent)
-                       text=episode.duration.toShortTime()
+                       text=episode.enclosure.duration.toShortTime()
                    }
                }.lparams{
                    width=0
@@ -94,7 +96,7 @@ class EpisodeListAdapter(result:EpisodeSearchResult):BaseAdapter() {
     }
 
     override fun getItem(position: Int): Any {
-      return result?.results?.get(position)!!
+      return feed?.items?.get(position)!!
     }
 
     override fun getItemId(position: Int): Long {
@@ -102,6 +104,10 @@ class EpisodeListAdapter(result:EpisodeSearchResult):BaseAdapter() {
     }
 
     override fun getCount(): Int {
-       return  result?.results?.size!!
+       return  feed?.items?.size!!
+    }
+
+    class ViewHolder(){
+
     }
 }

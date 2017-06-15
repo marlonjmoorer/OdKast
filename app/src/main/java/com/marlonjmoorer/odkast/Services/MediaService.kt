@@ -23,7 +23,8 @@ import java.util.*
 class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErrorListener{
 
 
-     val IsPlayingObservable:MediaObservable= MediaObservable()
+    val IsPlayingObservable:MediaObservable= MediaObservable()
+
 
 
 
@@ -45,8 +46,20 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         play_pause()
     }
 
+    var  rrIntent: Intent?=null
+    var playIntent:Intent?=null
+    var ffIntent: Intent? = null
     override fun onCreate() {
         instance= this
+        playIntent=Intent(applicationContext,MediaService::class.java).apply {
+            action= PLAY_PAUSE
+        }
+        ffIntent=Intent(applicationContext,MediaService::class.java).apply {
+            action= FF
+        }
+        rrIntent=Intent(applicationContext,MediaService::class.java).apply {
+            action= RR
+        }
     }
 
 
@@ -118,16 +131,6 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
         var remoteView = RemoteViews(packageName, R.layout.remote_view).apply{
 
-             var playIntent=Intent(applicationContext,MediaService::class.java).apply {
-                 action= PLAY_PAUSE
-             }
-             var ffIntent=Intent(applicationContext,MediaService::class.java).apply {
-                action= FF
-             }
-             var rrIntent=Intent(applicationContext,MediaService::class.java).apply {
-                action= RR
-             }
-
             setOnClickPendingIntent(R.id.note_play, PendingIntent.getService(this@MediaService,1,playIntent,0))
             setOnClickPendingIntent(R.id.note_ff, PendingIntent.getService(this@MediaService,1,ffIntent,0))
             setOnClickPendingIntent(R.id.note_rr, PendingIntent.getService(this@MediaService,1,rrIntent,0))
@@ -165,8 +168,8 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
                 PLAY_PAUSE->{  play_pause()}
                 BACK->{}
                 NEXT->{}
-                FF->{seekTo(currentPosition-30000)}
-                RR->{seekTo(currentPosition+30000)}
+                FF->{seekTo(currentPosition+30000)}
+                RR->{seekTo(currentPosition-30000)}
                 else->{}
             }
         }

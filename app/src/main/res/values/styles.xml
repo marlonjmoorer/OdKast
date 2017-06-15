@@ -8,6 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
 
     </style>
+    <style name="AppTheme_2" parent="Theme.AppCompat.Light">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:actionMenuTextColor">@color/white</item>
+    </style>
 
     <style name="Base_ToolbarStyle">
         <item name="popupTheme">@style/ThemeOverlay.AppCompat.Light</item>
