@@ -49,6 +49,8 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
     var  rrIntent: Intent?=null
     var playIntent:Intent?=null
     var ffIntent: Intent? = null
+
+
     override fun onCreate() {
         instance= this
         playIntent=Intent(applicationContext,MediaService::class.java).apply {
@@ -135,7 +137,7 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             setOnClickPendingIntent(R.id.note_ff, PendingIntent.getService(this@MediaService,1,ffIntent,0))
             setOnClickPendingIntent(R.id.note_rr, PendingIntent.getService(this@MediaService,1,rrIntent,0))
 
-            setImageViewBitmap(R.id.note_poster,nowPlaying?.image)
+           // setImageViewBitmap(R.id.note_poster,nowPlaying?.image)
             setTextViewText(R.id.note_title,nowPlaying?.title)
             setTextViewText(R.id.note_show_title,nowPlaying?.subTitle)
 
@@ -166,8 +168,12 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
             when(intent.action){
                 PLAY_PAUSE->{  play_pause()}
+                //STOP->{reset()}
                 BACK->{}
                 NEXT->{}
+                RESET->{stop()
+                        reset()
+                }
                 FF->{seekTo(currentPosition+30000)}
                 RR->{seekTo(currentPosition-30000)}
                 else->{}
@@ -177,12 +183,13 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
     companion object{
         private var instance: MediaService? = null
-        private val PLAY_PAUSE="PLAY_PAUSE"
-        private val BACK="BACK"
-        private val NEXT="NEXT"
-        private val FF="FF"
-        private val RR="RR"
-        private val STOP="STOP"
+        val PLAY_PAUSE="PLAY_PAUSE"
+        val BACK="BACK"
+        val NEXT="NEXT"
+        val FF="FF"
+        val RR="RR"
+        val STOP="STOP"
+        val RESET="RESET"
         private val NOTIFICATION_ID=1337
     }
 
@@ -193,7 +200,7 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             get()= instance?.mediaPlayer!!
     }
 
-    data class MediaObject(val url:String,val image:Bitmap,val title:String, val subTitle:String){}
+    data class MediaObject(val url:String,val image:Bitmap?,val title:String, val subTitle:String){}
 
     inner class MediaObservable : Observable() {
 

@@ -3,6 +3,7 @@ package com.marlonjmoorer.odkast.Adapters
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
+import com.marlonjmoorer.odkast.Fragments.CategoriesFragment
 import com.marlonjmoorer.odkast.Fragments.TopShowsFragment
 import com.marlonjmoorer.odkast.Fragments.TrendingFragment
 
@@ -15,6 +16,7 @@ class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
     var fragments= mapOf(
             "Subscription" to TrendingFragment(),
             "Top" to TopShowsFragment(),
+            "Categories" to CategoriesFragment(),
             "Trending" to TrendingFragment()
             )
 

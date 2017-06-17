@@ -5,4 +5,5 @@
     <item name="show_title" type="id" >1235</item>
     <item name="show_discription" type="id" />
     <item name="overflow_menu" type="id" />
+    <item name="loading_overlay" type="id" />
 </resources>

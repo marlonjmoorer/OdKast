@@ -6,6 +6,8 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 import android.widget.ImageView
 import com.marlonjmoorer.odkast.Helpers.loadUrl
+import com.marlonjmoorer.odkast.Helpers.toDate
+import com.marlonjmoorer.odkast.Helpers.toDateString
 import com.marlonjmoorer.odkast.Helpers.toShortTime
 import com.marlonjmoorer.odkast.Models.PodcastFeed
 import com.marlonjmoorer.odkast.R
@@ -51,13 +53,14 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
 
                    textView {
                        text=episode.title
+                       maxLines=1
                    }.lparams {
                        width= matchParent
                        height=0
                        weight=1f
                    }
                    textView {
-                       text=episode.pubDate
+                       text=episode.pubDate.toDate()?.toDateString()
                    }.lparams {
                        width= matchParent
                        height=0
@@ -71,10 +74,9 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
                    marginStart=dip(8)
                 }
                linearLayout {
-
                    gravity=Gravity.BOTTOM
                    textView {
-                       text
+
                        textColor=resources.getColor(R.color.colorAccent)
                        text=episode.enclosure.duration.toShortTime()
                    }
@@ -90,7 +92,7 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
                     height= matchParent
                     padding=dip(10)
                 }
-                setPadding(dip(16),0,dip(16),0)
+                setPadding(dip(16),dip(8),dip(16),dip(8))
            }
        }
     }

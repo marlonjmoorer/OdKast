@@ -71,9 +71,11 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
         var _view = with(parent!!.context) {
             relativeLayout {
 
+                backgroundResource=R.drawable.under_line
                 lparams {
                     height = dip(80)
                     width = matchParent
+
                     //bottomMargin=dip(4)
                 }
                 cardView {

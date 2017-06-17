@@ -79,5 +79,18 @@ class PodcastSearch {
 
         return  Util.parseJson<SearchResults>(json)
     }
+    fun SearchShowsByGenre(genre: Genre): SearchResults {
+        //https://itunes.apple.com/search?term
+        var url= baseApiUrl {
+            it.appendEncodedPath("search")
+                    .appendQueryParameter("genreId",genre.id())
+                    .appendQueryParameter("media","podcast")
+                    .appendQueryParameter("term","podcast")
+                    .appendQueryParameter("limit","15")
+        }
+        var json =URL(url).readText()
+
+        return  Util.parseJson<SearchResults>(json)
+    }
 
 }

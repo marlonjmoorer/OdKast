@@ -2,16 +2,24 @@ package com.marlonjmoorer.odkast.Helpers
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.graphics.drawable.GradientDrawable
+import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RelativeLayout
+import com.marlonjmoorer.odkast.R
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import com.squareup.picasso.OkHttpDownloader
 import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
+import org.jetbrains.anko.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -35,12 +43,47 @@ fun ImageView.loadUrl(url: String) {
     }
 
     //  var ur=url.replace("https","http")
+    //Picasso.with(this.contex)
+
+}
+
+
+fun View.loadUrl(url: String) {
+
+
+    var builder =  Picasso.Builder(context)
+    var target= object:Target{
+        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
+          Log.e("","")
+        }
+
+        override fun onBitmapFailed(errorDrawable: Drawable?) {
+            this@loadUrl.backgroundResource=R.drawable.icons8_add_filled
+        }
+
+        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
+           this@loadUrl.background= BitmapDrawable(bitmap)
+        }
+    }
+
+    this.setTag(this.id,target)
+    builder.downloader(OkHttpDownloader(context));
+    try {
+        var localTarget=getTag(this.id) as Target
+        builder.build().load(url).into(localTarget)
+
+    }
+    catch (ex:Exception){
+        print(ex.stackTrace.contentDeepToString())
+    }
+
+    //  var ur=url.replace("https","http")
     //Picasso.with(this.context)
 
 
 }
 fun String.toDate():Date?{
-    val df = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US)
+    val df = SimpleDateFormat("yyyyy-mm-dd hh:mm:ss", Locale.US)
     val date: Date
     try {
         date = df.parse(this)
@@ -61,42 +104,39 @@ fun SlidingUpPanelLayout.expand(){
 fun SlidingUpPanelLayout.collapse(){
     this.panelState=PanelState.COLLAPSED
 }
-fun View.loadUrl(url:String){
+fun View.loadingScreen(boolean: Boolean){
+    var loading= loadingUI(context)
+    if(this is ViewGroup){
 
-    var target = object: Target {
-        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-            //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-        }
-
-        override fun onBitmapFailed(errorDrawable: Drawable?) {
-            background=null
-        }
-
-        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-            background = BitmapDrawable(bitmap)
-            //  this@loadUrl.
-
-        }
-
+       if (boolean)
+           this.addView(loading)
+        else{
+           find<RelativeLayout>(R.id.loading_overlay)?.let {  this.removeView(it)}
+       }
     }
-
-
-
-    var builder =  Picasso.Builder(context);
-
-
-    builder.downloader(OkHttpDownloader(context));
-    try {
-        builder.build().load(url).into(target);
-    }
-    catch (ex:Exception){
-        print(ex.stackTrace.contentDeepToString())
-    }
-
-
-
 }
 
+
+private fun loadingUI(context: Context)= with(context){
+    relativeLayout {
+        id= R.id.loading_overlay
+        backgroundColor= resources.getColor(R.color.black)
+
+
+        gravity=Gravity.CENTER
+        progressBar{
+            isIndeterminate=true
+        }.lparams{
+            width=dip(75)
+            height= dip(75)
+
+        }
+        lparams {
+            height= matchParent
+            width= matchParent
+        }
+    }
+}
 
 
 fun View.fade(alpha:Float){

@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -25,6 +26,8 @@ import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
 import com.squareup.picasso.Picasso
 import org.jetbrains.anko.*
+import org.jetbrains.anko.coroutines.experimental.bg
+import org.jetbrains.anko.db.select
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
 
@@ -48,13 +51,16 @@ class MainActivity : AppCompatActivity(), Observer {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+       // startActivityasync(UI) {
+
+
 
         var toolbar = find<Toolbar>(R.id.toolbar)
         var viewPager = find<ViewPager>(R.id.viewpager)
         var tabLayout = find<TabLayout>(R.id.tabs)
         mini_player = find<LinearLayout>(R.id.mini_player)
         header = find<LinearLayout>(R.id.header)
-        seekBar = find<SeekBar>(R.id.seekBar);
+        seekBar = find<SeekBar>(R.id.seekBar)
         elapsedText = find<TextView>(R.id.elapsed)
         durationText = find<TextView>(R.id.duration)
 
@@ -148,14 +154,13 @@ class MainActivity : AppCompatActivity(), Observer {
 
     override fun onStart() {
         super.onStart()
-
         var i = intentFor<MediaService>()
         bindService(i, musicConnection, Context.BIND_AUTO_CREATE)
         startService(i)
-
     }
 
     override fun onBackPressed() {
+       // contentView?.loadingScreen(false)
         when (slidePanel?.panelState) {
             PanelState.EXPANDED -> slidePanel?.collapse()
             else -> super.onBackPressed()
@@ -164,21 +169,31 @@ class MainActivity : AppCompatActivity(), Observer {
 
     private fun setUpPlayback(episode: PodcastFeed.EpisodeItem) {
         with(episode) {
+            mediaPlayer?.isPlaying.let {
+                mediaService?.play_pause()
+                var i = intentFor<MediaService>().apply {
+                    action= MediaService.STOP
+                }
+                startService(i)
+            }
+
             find<ImageView>(R.id.mp_poster)?.loadUrl(thumbnail)
             find<TextView>(R.id.mp_title)?.text = title
            // find<TextView>(R.id.mp_show_title)?.text = "SHOW!!"
             find<TextView>(R.id.ep_title)?.text = title
-            doAsync {
-                val bitmap = Picasso.with(this@MainActivity).load(thumbnail).get();
+            //contentView?.loadingScreen(true)
+            doAsync(asycHandler()) {
+               // val bitmap = Picasso.with(this@MainActivity).load(thumbnail).get();
 
 
                 uiThread {
-                    var media = MediaService.MediaObject(enclosure.link, bitmap, title, "")
+                    var media = MediaService.MediaObject(enclosure.link, null, title, "")
                     mediaService?.setMedia(media)
                     seekBar!!.max = mediaPlayer?.duration!!
                     elapsedText?.text = 0.toTime()
                     durationText?.text = mediaPlayer?.duration!!.toTime()
-                    find<LinearLayout>(R.id.background).backgroundDrawable = BitmapDrawable(bitmap)
+                   // find<LinearLayout>(R.id.background).backgroundDrawable = BitmapDrawable(bitmap)
+                    find<LinearLayout>(R.id.background).loadUrl(thumbnail)
                 }
             }
 
@@ -256,6 +271,12 @@ class MainActivity : AppCompatActivity(), Observer {
             }
 
 
+        }
+    }
+
+    fun resume(){
+        database.use{
+            select("User").whereArgs("")
         }
     }
 
