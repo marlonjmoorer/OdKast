@@ -1,5 +1,6 @@
 package com.marlonjmoorer.odkast.Adapters
 
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.BaseAdapter
@@ -15,54 +16,67 @@ import org.jetbrains.anko.*
 class PodcastListAdapter(results: SearchResults) : BaseAdapter() {
 
 
-    private val results:SearchResults
+    private val results: SearchResults
 
     init {
-        this.results=results
+        this.results = results
     }
+
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
-        var show= this.getItem(position)
+        var show = this.getItem(position)
 
-        return with(parent!!.context){
+        return with(parent!!.context) {
 
             linearLayout {
-                lparams(height= dip(60), width = matchParent)
+                lparams {
+                    height = dip(80)
+                    width = matchParent
+                    padding = dip(8)
+
+                    //bottomMargin=dip(4)
+                }
 
                 frameLayout {
                     setBackgroundColor(R.color.colorAccent)
-                    imageView{
-                        loadUrl(show.artworkUrl60)
-                        adjustViewBounds=true
-                        scaleType= ImageView.ScaleType.FIT_XY
+                    imageView {
+                        loadUrl(show.artworkUrl100)
+                        adjustViewBounds = true
+                        scaleType = ImageView.ScaleType.FIT_XY
 
-                    }.lparams{
-                        width= matchParent
-                        height= matchParent
+                    }.lparams {
+                        width = matchParent
+                        height = matchParent
+
 
                     }
-                }.lparams{
+                }.lparams {
                     weight = 1F
-                    height= matchParent
-                    width=dip(0)
+                    height = matchParent
+                    width = dip(0)
                 }
                 verticalLayout {
+
                     textView {
-                        text=show.collectionName
-                    }.lparams{
-                        width= wrapContent
-                        height= wrapContent
+                        text = show.collectionName
+                    }.lparams {
+                        width = wrapContent
+                        height = wrapContent
+
                     }
-                    textView {
-                        text=show.artistName
-                    }.lparams{
-                        width= wrapContent
-                        height= wrapContent
-                    }
-                }.lparams{
-                   height= wrapContent
-                    weight=4F
-                    width=dip(0)
+                    /*textView {
+                        text = show.artistName
+                    }.lparams {
+                        width = wrapContent
+                        height = wrapContent
+                    }*/
+                }.lparams {
+                    height = wrapContent
+                    weight = 4F
+                    width = dip(0)
+                    marginStart=dip(8)
+                    gravity= Gravity.CENTER_VERTICAL
+
                 }
 
             }
@@ -71,15 +85,20 @@ class PodcastListAdapter(results: SearchResults) : BaseAdapter() {
     }
 
     override fun getItem(position: Int): SearchResults.ResultItem {
-       return this.results.results[position]
+        return this.results.results[position]
     }
 
     override fun getItemId(position: Int): Long {
-     return  position.toLong()
+        return position.toLong()
     }
 
     override fun getCount(): Int {
-      return this.results.results.size
+
+        return this.results.results.size
+    }
+
+    fun update() {
+        notifyDataSetChanged()
     }
 
 

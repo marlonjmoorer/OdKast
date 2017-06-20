@@ -61,7 +61,7 @@ class ShowDetailActivity : AppCompatActivity() {
             var id = intent.getIntExtra(id_key, -1)
             doAsync(asycHandler()) {
                 //var ai = AudioSearch.getInstance(this@ShowDetailActivity)
-                show = PodcastSearch().GetShowById(id) //ai.GetShowById(id)
+                show = PodcastSearch().GetShowById(id.toString()) //ai.GetShowById(id)
                 var feed=   PodcastSearch().getPodcastFeed(show?.feedUrl!!)
 
 

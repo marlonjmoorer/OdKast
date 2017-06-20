@@ -2,6 +2,8 @@ package com.marlonjmoorer.odkast.Adapters
 
 import android.app.Activity
 import android.content.Intent
+import android.os.Build
+import android.support.annotation.RequiresApi
 import android.support.v7.widget.RecyclerView
 import android.text.Html
 import android.view.Gravity
@@ -11,6 +13,9 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
+import com.marlonjmoorer.odkast.Helpers.DbObservable
+import com.marlonjmoorer.odkast.Helpers.OnPodcastSelectedLister
+import com.marlonjmoorer.odkast.Helpers.database
 import com.marlonjmoorer.odkast.Helpers.loadUrl
 import com.marlonjmoorer.odkast.Models.ShowSearchResult
 import com.marlonjmoorer.odkast.Models.TopPodcasts
@@ -19,14 +24,16 @@ import com.marlonjmoorer.odkast.ShowDetailActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.sdk25.coroutines.onClick
+import java.util.*
 
 
 /**
  * Created by marlonmoorer on 6/10/17.
  */
-class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapter.ShowViewHolder>() {
+class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapter.ShowViewHolder>(), Observer {
 
     private var result: TopPodcasts
+
 
     init {
         this.result = result
@@ -39,23 +46,44 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
         with(holder!!) {
             thumbnail!!.loadUrl(show.artworkUrl100)
             title!!.text = show.name
-            // description!!.text = Html.fromHtml(show.description)
+            var ctx = itemView.context as OnPodcastSelectedLister
             itemView.onClick { v ->
-                var ctx = holder.itemView.context as Activity
-                var intent = Intent(ctx, ShowDetailActivity::class.java)
-                intent.putExtra(ShowDetailActivity.id_key, show.id.toInt())
-                ctx.startActivityForResult(intent, 0)
+
+                ctx.onShowSelected(show.id)
             }
             menu?.onClick { v ->
-                val popup = PopupMenu(itemView.context, v)
-                popup.getMenuInflater().inflate(R.menu.show_menu, popup.getMenu())
-                popup.setOnMenuItemClickListener { item ->
-                    when (item) {
+                with(PopupMenu(itemView.context, v)) {
+                    menuInflater.inflate(R.menu.show_menu, menu)
 
+                    setOnMenuItemClickListener { item ->
 
+                        when (item.itemId) {
+                            R.id.subscribe -> {
+                                ctx.onSubscribe(show.id)
+                                notifyItemChanged(position)
+                            }
+                            R.id.unsubscribe->{
+                                ctx.onUnSubscribe(show.id)
+                                notifyItemChanged(position)
+                            }
+                            else -> {
+                            }
+                        }
+                        false
                     }
+                    if(itemView.context.database.subsciptions?.contains(show.id)!!){
+                        menu.removeItem(R.id.subscribe)
+                    }else{
+                        menu.removeItem(R.id.unsubscribe)
+                    }
+
+
+                    show()
+
+
                 }
-                popup.show()
+
+
             }
         }
 
@@ -65,13 +93,15 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
         return result.feed.results.size
     }
 
+
+    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ShowViewHolder {
 
         //var  _view = LayoutInflater.from(parent?.getContext()).inflate(R.layout.show_item, parent, false);
         var _view = with(parent!!.context) {
             relativeLayout {
 
-                backgroundResource=R.drawable.under_line
+                backgroundResource = R.drawable.under_line
                 lparams {
                     height = dip(80)
                     width = matchParent
@@ -110,7 +140,7 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
                             textColor = resources.getColor(R.color.black)
                             textSize = 16f
                             maxLines = 3
-                            padding=dip(8)
+                            padding = dip(8)
                             //gravity = Gravity.CENTER
                             //  setBackgroundColor(resources.getColor(R.color.green_400))
                         }.lparams {
@@ -144,6 +174,11 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
 
     }
 
+    override fun update(o: Observable?, arg: Any?) {
+
+        // notifyItemChanged()
+    }
+
 
     inner class ShowViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
@@ -156,7 +191,7 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
         init {
             title = view.find<TextView>(R.id.show_title)
             thumbnail = view.find<ImageView>(R.id.show_image)
-          //  description = view.find<TextView>(R.id.show_discription)
+            //  description = view.find<TextView>(R.id.show_discription)
             menu = view.find<ImageButton>(R.id.overflow_menu)
         }
     }

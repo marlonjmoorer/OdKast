@@ -1,12 +1,9 @@
 package com.marlonjmoorer.odkast
 
-import android.app.SearchManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.IBinder
@@ -15,25 +12,24 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import com.marlonjmoorer.odkast.Adapters.HomeAdapter
+import com.marlonjmoorer.odkast.Fragments.SearchFragment
 import com.marlonjmoorer.odkast.Helpers.*
 import com.marlonjmoorer.odkast.Models.PodcastFeed
 import com.marlonjmoorer.odkast.Services.MediaService
-import com.marlonjmoorer.odkast.Services.MediaService.MusicBinder
+import com.marlonjmoorer.odkast.Services.MediaService.MediaBinder
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
-import com.squareup.picasso.Picasso
 import org.jetbrains.anko.*
-import org.jetbrains.anko.coroutines.experimental.bg
-import org.jetbrains.anko.db.select
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
+import org.jetbrains.anko.design.longSnackbar
 
 
-class MainActivity : AppCompatActivity(), Observer {
-
+class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
 
     private var slidePanel: SlidingUpPanelLayout? = null
     private var mini_player: LinearLayout? = null
@@ -46,23 +42,46 @@ class MainActivity : AppCompatActivity(), Observer {
     private var durationText: TextView? = null
     private var actionSearch: Button? = null
     private var searchView: SearchView? = null
+    private var ep_view: View? = null
+
+
+    override fun onShowSelected(id: String) {
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.main, ShowDetailFragment.newInstace(id))
+                .addToBackStack(null)
+                .commit()
+
+    }
+
+    override fun onEpisodeSelected(episode: PodcastFeed.EpisodeItem) {
+        this.setUpPlayback(episode)
+        slidePanel?.expand()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-       // startActivityasync(UI) {
+        database.pultus?.let {
 
+            it.delete(Subscription())
+        }
 
 
         var toolbar = find<Toolbar>(R.id.toolbar)
         var viewPager = find<ViewPager>(R.id.viewpager)
         var tabLayout = find<TabLayout>(R.id.tabs)
+
+
         mini_player = find<LinearLayout>(R.id.mini_player)
         header = find<LinearLayout>(R.id.header)
         seekBar = find<SeekBar>(R.id.seekBar)
         elapsedText = find<TextView>(R.id.elapsed)
         durationText = find<TextView>(R.id.duration)
+        ep_view = findViewById(R.id.ep_view)
+
 
 
         setSupportActionBar(toolbar)
@@ -108,41 +127,6 @@ class MainActivity : AppCompatActivity(), Observer {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (data?.hasExtra("ep") == true) {
-            var ep = data.getStringExtra("ep").parseTo<PodcastFeed.EpisodeItem>()
-            this.setUpPlayback(ep)
-            slidePanel?.expand()
-        }
-    }
-
-
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        val inflater = menuInflater
-
-        inflater.inflate(R.menu.menu_main, menu)
-
-        val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        searchView = menu?.findItem(R.id.menu_search)?.actionView as SearchView
-        searchView?.setSearchableInfo(
-                searchManager.getSearchableInfo(componentName))
-
-        val textChangeListener = object : SearchView.OnQueryTextListener {
-            override fun onQueryTextChange(newText: String): Boolean {
-                // this is your adapter that will be filtadapter.getFilter().filter(newText);
-                println("on text chnge text: " + newText)
-                return true
-            }
-
-            override fun onQueryTextSubmit(query: String): Boolean {
-                searchView?.onActionViewCollapsed()
-                println("on query submit: " + query)
-                return false
-            }
-        }
-        searchView?.setOnQueryTextListener(textChangeListener)
-        return true
-    }
 
     override fun onNewIntent(intent: Intent?) {
         if (intent?.hasExtra("ep") == true) {
@@ -155,12 +139,12 @@ class MainActivity : AppCompatActivity(), Observer {
     override fun onStart() {
         super.onStart()
         var i = intentFor<MediaService>()
-        bindService(i, musicConnection, Context.BIND_AUTO_CREATE)
+        bindService(i, mediaConnection, Context.BIND_AUTO_CREATE)
         startService(i)
     }
 
     override fun onBackPressed() {
-       // contentView?.loadingScreen(false)
+        // contentView?.loadingScreen(false)
         when (slidePanel?.panelState) {
             PanelState.EXPANDED -> slidePanel?.collapse()
             else -> super.onBackPressed()
@@ -169,31 +153,29 @@ class MainActivity : AppCompatActivity(), Observer {
 
     private fun setUpPlayback(episode: PodcastFeed.EpisodeItem) {
         with(episode) {
-            mediaPlayer?.isPlaying.let {
+            if (mediaPlayer?.isPlaying!!) {
                 mediaService?.play_pause()
                 var i = intentFor<MediaService>().apply {
-                    action= MediaService.STOP
+                    action = MediaService.STOP
                 }
                 startService(i)
             }
 
             find<ImageView>(R.id.mp_poster)?.loadUrl(thumbnail)
             find<TextView>(R.id.mp_title)?.text = title
-           // find<TextView>(R.id.mp_show_title)?.text = "SHOW!!"
             find<TextView>(R.id.ep_title)?.text = title
             //contentView?.loadingScreen(true)
             doAsync(asycHandler()) {
-               // val bitmap = Picasso.with(this@MainActivity).load(thumbnail).get();
 
 
                 uiThread {
-                    var media = MediaService.MediaObject(enclosure.link, null, title, "")
+
+                    var media = MediaService.MediaObject(enclosure.link, thumbnail, title, "")
                     mediaService?.setMedia(media)
                     seekBar!!.max = mediaPlayer?.duration!!
                     elapsedText?.text = 0.toTime()
                     durationText?.text = mediaPlayer?.duration!!.toTime()
-                   // find<LinearLayout>(R.id.background).backgroundDrawable = BitmapDrawable(bitmap)
-                    find<LinearLayout>(R.id.background).loadUrl(thumbnail)
+                    find<ImageView>(R.id.background).loadUrl(thumbnail)
                 }
             }
 
@@ -208,10 +190,10 @@ class MainActivity : AppCompatActivity(), Observer {
                 mediaService?.play_pause()
 
             }
+            ep_view?.visibility = View.VISIBLE
 
         }
     }
-
 
 
     fun startSeekBar() = doAsync(asycHandler()) {
@@ -237,10 +219,10 @@ class MainActivity : AppCompatActivity(), Observer {
     }
 
 
-    private val musicConnection = object : ServiceConnection {
+    private val mediaConnection = object : ServiceConnection {
 
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as MusicBinder
+            val binder = service as MediaBinder
 
             mediaService = binder.service
             mediaService!!.IsPlayingObservable?.addObserver(this@MainActivity)
@@ -274,13 +256,54 @@ class MainActivity : AppCompatActivity(), Observer {
         }
     }
 
-    fun resume(){
-        database.use{
-            select("User").whereArgs("")
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater = menuInflater
+
+        inflater.inflate(R.menu.menu_main, menu)
+
+
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+        when (item?.itemId) {
+
+            R.id.action_open_search -> {
+                var fragment = SearchFragment()
+                supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.main, fragment)
+                        .addToBackStack("search")
+                        .commit()
+                invalidateOptionsMenu()
+
+            }
         }
+
+        return super.onOptionsItemSelected(item)
     }
 
 
+    override fun onSubscribe(id: String) {
+
+        database.subscribe(id)
+
+        longSnackbar(contentView!!, "Subcribed", "Undo", { v ->
+            database.unSubscribe(id)
+            longSnackbar(contentView!!, "Unsubscribed")
+        })
+    }
+
+    override fun onUnSubscribe(id: String) {
+        database.unSubscribe(id)
+
+        longSnackbar(contentView!!, "UnSubcribed", "Undo", { v ->
+            database.subscribe(id)
+            longSnackbar(contentView!!, "Subscribed")
+        })
+    }
 }
 
 

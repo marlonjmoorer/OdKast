@@ -2,6 +2,7 @@ package com.marlonjmoorer.odkast.Helpers
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Notification
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
@@ -13,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
+import android.widget.RemoteViews
 import com.marlonjmoorer.odkast.R
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
@@ -36,7 +38,7 @@ fun ImageView.loadUrl(url: String) {
 
     builder.downloader(OkHttpDownloader(context));
     try {
-        builder.build().load(url).into(this);
+        builder.build().load(url).fit().into(this)
     }
     catch (ex:Exception){
         print(ex.stackTrace.contentDeepToString())
@@ -48,7 +50,7 @@ fun ImageView.loadUrl(url: String) {
 }
 
 
-fun View.loadUrl(url: String) {
+fun View.loadUrl2(url: String) {
 
 
     var builder =  Picasso.Builder(context)
@@ -58,11 +60,11 @@ fun View.loadUrl(url: String) {
         }
 
         override fun onBitmapFailed(errorDrawable: Drawable?) {
-            this@loadUrl.backgroundResource=R.drawable.icons8_add_filled
+            this@loadUrl2.backgroundResource=R.drawable.icons8_add_filled
         }
 
         override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-           this@loadUrl.background= BitmapDrawable(bitmap)
+           this@loadUrl2.background= BitmapDrawable(bitmap)
         }
     }
 
@@ -202,4 +204,19 @@ fun Int.toTime():String{
             .append(String.format("%02d", millis % (1000 * 60 * 60) % (1000 * 60) / 1000))
 
     return buf.toString()
+}
+
+fun Notification.loadImage(url:String,resource:Int){
+
+
+    //var builder =  Picasso.Builder();
+
+   // builder.downloader(OkHttpDownloader(context));
+    try {
+      //  builder.build().load(url).fit().into(this,)
+    }
+    catch (ex:Exception){
+        print(ex.stackTrace.contentDeepToString())
+    }
+
 }

@@ -47,14 +47,19 @@ class PodcastSearch {
         var json= URL(rssUrl.toString()).readText()
         return  Util.parseJson<TopPodcasts>(json)
     }
-    fun GetShowById(id:Int): SearchResults.ResultItem? {
-        var url= baseApiUrl { it.appendEncodedPath("lookup").appendQueryParameter("id","$id") }
+    fun GetShowById(id:String): SearchResults.ResultItem? {
+        var url= baseApiUrl { it.appendEncodedPath("lookup").appendQueryParameter("id",id) }
         var json =URL(url).readText()
-
-
         return  Util.parseJson<SearchResults>(json).results.first()
     }
 
+    fun GetShowByManyIds(idList:String): SearchResults {
+        var url = baseApiUrl { it.appendEncodedPath("lookup").appendQueryParameter("id", idList) }
+        var json = URL(url).readText()
+
+
+        return Util.parseJson<SearchResults>(json)
+    }
     fun getPodcastFeed(url:String):PodcastFeed{
         var url= Uri.Builder()
                 .scheme("https")

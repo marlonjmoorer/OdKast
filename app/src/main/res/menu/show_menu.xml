@@ -2,15 +2,13 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/one"
-        android:title="One"/>
+        android:id="@+id/subscribe"
+        android:title="Subscribe"/>
 
     <item
-        android:id="@+id/two"
-        android:title="Two"/>
+        android:id="@+id/unsubscribe"
+        android:title="Unsubcribe"/>
 
-    <item
-        android:id="@+id/three"
-        android:title="Three"/>
+
 
 </menu>

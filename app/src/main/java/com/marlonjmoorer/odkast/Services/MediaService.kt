@@ -6,7 +6,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.media.AudioManager
 import android.media.MediaPlayer
 import android.os.Binder
@@ -14,6 +13,7 @@ import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
 import com.marlonjmoorer.odkast.R
+import com.squareup.picasso.Picasso
 import java.util.*
 
 
@@ -39,7 +39,7 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
 
 
     override fun onBind(intent: Intent?): IBinder? {
-       return MusicBinder()
+       return MediaBinder()
     }
 
     override fun onPrepared(mp: MediaPlayer?) {
@@ -137,7 +137,7 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
             setOnClickPendingIntent(R.id.note_ff, PendingIntent.getService(this@MediaService,1,ffIntent,0))
             setOnClickPendingIntent(R.id.note_rr, PendingIntent.getService(this@MediaService,1,rrIntent,0))
 
-           // setImageViewBitmap(R.id.note_poster,nowPlaying?.image)
+           // setImageViewBitmap(R.id.note_poster,nowPlaying?.imageUrl)
             setTextViewText(R.id.note_title,nowPlaying?.title)
             setTextViewText(R.id.note_show_title,nowPlaying?.subTitle)
 
@@ -147,8 +147,8 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         }
 
 
-        //val intent = Intent(applicationContext, MediaService::class.java)
-        //val pendingI= PendingIntent.getService(this,1, intent,0)
+
+
 
 
         val notification = Notification.Builder(this)
@@ -158,6 +158,10 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
                 .setTicker("Tick")
                 .setContent(remoteView)
                 .build()
+
+        Picasso.with(this)
+                .load(nowPlaying?.imageUrl)
+                .into(remoteView, R.id.note_poster, NOTIFICATION_ID, notification)
 
         return notification
 
@@ -193,14 +197,14 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
         private val NOTIFICATION_ID=1337
     }
 
-    inner class MusicBinder : Binder() {
+    inner class MediaBinder : Binder() {
         internal val service: MediaService
             get() = instance!!
         internal val mediaPlayer:MediaPlayer
             get()= instance?.mediaPlayer!!
     }
 
-    data class MediaObject(val url:String,val image:Bitmap?,val title:String, val subTitle:String){}
+    data class MediaObject(val url:String, val imageUrl:String?, val title:String, val subTitle:String)
 
     inner class MediaObservable : Observable() {
 

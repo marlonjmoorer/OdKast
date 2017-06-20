@@ -4,8 +4,8 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import com.marlonjmoorer.odkast.Fragments.CategoriesFragment
+import com.marlonjmoorer.odkast.Fragments.SubscriptionFragment
 import com.marlonjmoorer.odkast.Fragments.TopShowsFragment
-import com.marlonjmoorer.odkast.Fragments.TrendingFragment
 
 /**
  * Created by marlonmoorer on 5/29/17.
@@ -14,11 +14,9 @@ class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     var manager:FragmentManager;
     var fragments= mapOf(
-            "Subscription" to TrendingFragment(),
+            "Subscription" to SubscriptionFragment(),
             "Top" to TopShowsFragment(),
-            "Categories" to CategoriesFragment(),
-            "Trending" to TrendingFragment()
-            )
+            "Categories" to CategoriesFragment())
 
     init {
         this.manager=fm

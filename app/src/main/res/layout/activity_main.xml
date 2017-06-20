@@ -8,8 +8,7 @@
 
     tools:context="com.marlonjmoorer.odkast.MainActivity">
 
-    <com.sothree.slidinguppanel.SlidingUpPanelLayout
-        xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    <com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:sothree="http://schemas.android.com/apk/res-auto"
         android:id="@+id/sliding_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,50 +16,66 @@
 
         sothree:umanoPanelHeight="68dp"
         sothree:umanoShadowHeight="4dp">
+
+
         <RelativeLayout
+            android:id="@+id/main"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
                 style="@style/Base_ToolbarStyle"
-                >
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize">
 
 
             </android.support.v7.widget.Toolbar>
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tabs"
+            <FrameLayout
+
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/toolbar"
-                android:background="@color/colorPrimary"
-                android:elevation="6dp"
-                android:minHeight="?attr/actionBarSize"
-                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:tabMode="fixed">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/toolbar">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
 
 
+                    <android.support.design.widget.TabLayout
+                        android:id="@+id/tabs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
 
-            </android.support.design.widget.TabLayout>
+                        android:background="@color/colorPrimary"
+
+                        android:minHeight="?attr/actionBarSize"
+                        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                        app:tabMode="fixed">
 
 
-            <android.support.v4.view.ViewPager
-                android:id="@+id/viewpager"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/tabs" />
+                    </android.support.design.widget.TabLayout>
+
+
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/viewpager"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/tabs" />
+                </LinearLayout>
+            </FrameLayout>
 
         </RelativeLayout>
 
 
-
-        <include layout="@layout/episode_player"/>
+        <include
+            android:id="@+id/ep_view"
+            layout="@layout/episode_player"
+            android:visibility="gone" />
     </com.sothree.slidinguppanel.SlidingUpPanelLayout>
-
-
 
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import com.marlonjmoorer.odkast.Adapters.ShowListAdapter
@@ -12,6 +13,7 @@ import com.marlonjmoorer.odkast.Helpers.AudioSearch
 import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
 import org.jetbrains.anko.*
+import org.jetbrains.anko.recyclerview.v7.coroutines.onItemTouchListener
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
 
@@ -56,6 +58,7 @@ class TopShowsFragment : Fragment() {
                 showListView?.adapter = ShowListAdapter(searchResult)//PodcastGridAdapter(searchResult)
                 showListView?.setLayoutManager(linearLayoutManager);
                 showListView?.setHasFixedSize(true);
+
 
                /* grid.onItemClick { parent, view, position, id ->
                    var show= grid.adapter.getItem(position) as ShowSearchResult.ResultsBean
