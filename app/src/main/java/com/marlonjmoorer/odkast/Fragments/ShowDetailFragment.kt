@@ -57,7 +57,7 @@ class ShowDetailFragment : DialogFragment() {
         loadingView = contentView?.find<View>(R.id.loading_view)
         description = contentView?.find<TextView>(R.id.description)
 
-        // loadingView.visibility = View.VISIBLE
+        loadingView?.visibility = View.VISIBLE
 
 
         return contentView
@@ -78,7 +78,7 @@ class ShowDetailFragment : DialogFragment() {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
         if (arguments.containsKey(id_key)) {
-            // view?.loadingScreen(true)
+           //contentView?.loadingScreen(true)
             var id = arguments.getString(id_key)
             doAsync(asycHandler()) {
                 show = PodcastSearch().GetShowById(id) //ai.GetShowById(id)
@@ -104,8 +104,8 @@ class ShowDetailFragment : DialogFragment() {
                         buidDialog(episode).show()
                     }
                     description?.text = Html.fromHtml(feed.feed.description)
-                    // loadingView.visibility = View.GONE
-                    //  view?.loadingScreen(false)
+                    loadingView?.visibility = View.GONE
+                    //contentView?.loadingScreen(false)
                 }
 
 

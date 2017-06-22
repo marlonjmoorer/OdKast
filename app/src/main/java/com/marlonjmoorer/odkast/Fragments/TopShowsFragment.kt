@@ -5,15 +5,13 @@ import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import com.marlonjmoorer.odkast.Adapters.ShowListAdapter
-import com.marlonjmoorer.odkast.Helpers.AudioSearch
+import com.marlonjmoorer.odkast.Adapters.PopularShowListAdapter
 import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
+import com.marlonjmoorer.odkast.R
 import org.jetbrains.anko.*
-import org.jetbrains.anko.recyclerview.v7.coroutines.onItemTouchListener
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 
 
@@ -32,9 +30,11 @@ class TopShowsFragment : Fragment() {
 
     private fun getUI(container: ViewGroup): View? =with(container){
         linearLayout {
+            setBackgroundColor(resources.getColor(R.color.colorPrimaryLight))
             lparams(width = matchParent,height = matchParent)
-            padding=dip(8)
+            //padding=dip(8)
             showListView= recyclerView{
+
 
             }.lparams{
                 width = matchParent
@@ -55,7 +55,7 @@ class TopShowsFragment : Fragment() {
             var searchResult=  PodcastSearch().GetTopPodcast() //ai.GetTopShows()
             uiThread {
 
-                showListView?.adapter = ShowListAdapter(searchResult)//PodcastGridAdapter(searchResult)
+                showListView?.adapter = PopularShowListAdapter(searchResult)//PodcastGridAdapter(searchResult)
                 showListView?.setLayoutManager(linearLayoutManager);
                 showListView?.setHasFixedSize(true);
 

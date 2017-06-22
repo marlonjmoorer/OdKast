@@ -22,20 +22,15 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
 
 
     init {
-        categoriesGroups=Genre.values().map {
-          //  var results=PodcastSearch().SearchShowsByGenre(it).results
-            GenreGroup(it,null)
-        }
-
-           /* doAsync {
-               categoriesGroups=Genre.values().map {
-                   var results=PodcastSearch().SearchShowsByGenre(it).results
-                  GenreGroup(it,results)
-                }
+        doAsync {
+            categoriesGroups=Genre.values().map {
+                 var results=PodcastSearch().SearchShowsByGenre(it).results
+                GenreGroup(it,results)
+            }
+            uiThread {
                 notifyDataSetChanged()
-            }*/
-
-
+            }
+        }
 
     }
     override fun getGroup(groupPosition: Int): GenreGroup? {
@@ -55,7 +50,7 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
 
         return  with(parent!!.context){
           linearLayout {
-
+              setBackgroundColor(resources.getColor(R.color.colorPrimary))
               lparams{
                   width= matchParent
                   height= matchParent
@@ -63,6 +58,7 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
               textView {
                   gravity= Gravity.CENTER_VERTICAL
                   text=group?.genre?.name
+                  textColor=resources.getColor(R.color.colorPrimaryLight)
 
               }.lparams{
                   height= matchParent
@@ -108,14 +104,15 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
         return with(parent!!.context){
 
             linearLayout {
-                lparams(height= matchParent, width = matchParent)
+                lparams(height= dip(64), width = matchParent)
                 setPadding(dip(8),dip(8),dip(8),dip(8))
+                setBackgroundColor(resources.getColor(R.color.colorPrimaryLight))
 
 
                 frameLayout {
-                    setBackgroundColor(R.color.colorAccent)
+                    setBackgroundColor(resources.getColor(R.color.colorAccent))
                     imageView{
-                        show?.artworkUrl60?.let{loadUrl(it)}
+                        loadUrl(show?.artworkUrl30!!)
                         adjustViewBounds=true
                         scaleType= ImageView.ScaleType.FIT_XY
 
@@ -126,13 +123,14 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
                     }
                 }.lparams{
                     weight = 1F
-                    height= wrapContent
+                    height= matchParent
                     width=0
                     marginEnd=dip(8)
                 }
                 verticalLayout {
                     textView {
                         text=show?.collectionName
+                        textColor=resources.getColor(R.color.white)
                     }.lparams{
                         width= wrapContent
                         height= wrapContent

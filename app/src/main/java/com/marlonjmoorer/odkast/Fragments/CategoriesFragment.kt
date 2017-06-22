@@ -7,23 +7,25 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import com.marlonjmoorer.odkast.Adapters.CategoriesListAdapter
-import com.marlonjmoorer.odkast.Adapters.TrendingListAdapter
-import com.marlonjmoorer.odkast.Helpers.AudioSearch
-import com.marlonjmoorer.odkast.Helpers.Genre
+import com.marlonjmoorer.odkast.Helpers.OnPodcastSelectedLister
 import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
+import com.marlonjmoorer.odkast.Helpers.database
 import com.marlonjmoorer.odkast.R
 import org.jetbrains.anko.*
+import org.jetbrains.anko.sdk25.coroutines.onChildClick
 import org.jetbrains.anko.sdk25.coroutines.onGroupCollapse
 import org.jetbrains.anko.sdk25.coroutines.onGroupExpand
 import org.jetbrains.anko.sdk25.coroutines.onItemClick
 import org.jetbrains.anko.support.v4.longToast
+import java.util.*
 
 
 /**
  * Created by marlonmoorer on 5/29/17.
  */
-class CategoriesFragment: Fragment() {
+class CategoriesFragment: Fragment(){
+
 
 
     var _view:View?=null
@@ -58,9 +60,14 @@ class CategoriesFragment: Fragment() {
                 var eview=  _view?.find<ExpandableListView>(R.id.listview)
 
                 eview?.setAdapter(adapter)
-                eview?.onItemClick { p0, p1, p2, p3 ->{
-                    longToast("Clicked")
-                }}
+
+                eview?.onChildClick { parent, v, groupPosition, childPosition, id ->
+                    var ctx= parent?.context
+                    var show= adapter?.getChild(groupPosition,childPosition)
+                    if(ctx is OnPodcastSelectedLister ){
+                       show?.let { ctx.onShowSelected("${it.collectionId}") }
+                    }
+                }
                 eview?.onGroupExpand{groupPosition ->
                     adapter?.getGroup(groupPosition)?.let { if (it.searchResults==null)  populateDropdowns(it)}
                 }
@@ -77,6 +84,9 @@ class CategoriesFragment: Fragment() {
         doAsync {
             group.searchResults=PodcastSearch().SearchShowsByGenre(group.genre).results
             uiThread { adapter?.notifyDataSetChanged() }
+
         }
     }
+
+
 }

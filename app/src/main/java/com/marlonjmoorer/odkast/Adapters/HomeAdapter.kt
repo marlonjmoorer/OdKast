@@ -14,7 +14,7 @@ class HomeAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     var manager:FragmentManager;
     var fragments= mapOf(
-            "Subscription" to SubscriptionFragment(),
+            "Subscriptions" to SubscriptionFragment(),
             "Top" to TopShowsFragment(),
             "Categories" to CategoriesFragment())
 

@@ -1,20 +1,20 @@
 package com.marlonjmoorer.odkast.Fragments
 
-import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ListView
 import com.marlonjmoorer.odkast.Adapters.PodcastListAdapter
-import com.marlonjmoorer.odkast.Adapters.ShowListAdapter
+import com.marlonjmoorer.odkast.Adapters.PopularShowListAdapter
+import com.marlonjmoorer.odkast.Adapters.SubscriptionAdapter
 import com.marlonjmoorer.odkast.Helpers.*
+import com.marlonjmoorer.odkast.R
 import org.jetbrains.anko.*
-import org.jetbrains.anko.db.IntParser
-import org.jetbrains.anko.db.parseList
-import org.jetbrains.anko.db.select
-import org.jetbrains.anko.support.v4.toast
+import org.jetbrains.anko.recyclerview.v7.recyclerView
 import java.util.*
 
 /**
@@ -22,7 +22,7 @@ import java.util.*
  */
 class SubscriptionFragment : Fragment(),Observer {
 
-    var subListView: ListView? = null
+    var subListView: RecyclerView? = null
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -33,17 +33,21 @@ class SubscriptionFragment : Fragment(),Observer {
     private fun getUI(container: ViewGroup): View? = with(container) {
 
         verticalLayout {
-            subListView = listView {}
-                    .lparams {
-                        width = matchParent
-                        height = matchParent
-                    }
+            setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            subListView = recyclerView {
+
+
+            }.lparams {
+                width = matchParent
+                height = matchParent
+            }
 
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        loadSubscriptions()
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -59,7 +63,7 @@ class SubscriptionFragment : Fragment(),Observer {
         doAsync {
             activity.database.pultus?.let {
                 var subs = it.find(Subscription())
-                if (subs.size != subListView?.count) {
+                if (subs.size != subListView?.childCount) {
                     var ids = subs.map {
                         (it as Subscription).show_id
                     }
@@ -67,8 +71,10 @@ class SubscriptionFragment : Fragment(),Observer {
                     var shows = PodcastSearch().GetShowByManyIds(ids.joinToString(","))
                     uiThread {
                         shows?.let {
-                            var adapter=PodcastListAdapter(shows)
+
+                            var adapter=SubscriptionAdapter(shows)
                             subListView?.adapter=adapter
+                            subListView?.layoutManager=GridLayoutManager(activity,2)
 
                         }
                     }

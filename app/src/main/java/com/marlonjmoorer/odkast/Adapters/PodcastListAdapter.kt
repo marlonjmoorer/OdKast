@@ -29,11 +29,11 @@ class PodcastListAdapter(results: SearchResults) : BaseAdapter() {
         return with(parent!!.context) {
 
             linearLayout {
+                setBackgroundColor(resources.getColor(R.color.colorPrimary))
                 lparams {
                     height = dip(80)
                     width = matchParent
                     padding = dip(8)
-
                     //bottomMargin=dip(4)
                 }
 
@@ -59,6 +59,7 @@ class PodcastListAdapter(results: SearchResults) : BaseAdapter() {
 
                     textView {
                         text = show.collectionName
+                        textColor=resources.getColor(R.color.white)
                     }.lparams {
                         width = wrapContent
                         height = wrapContent

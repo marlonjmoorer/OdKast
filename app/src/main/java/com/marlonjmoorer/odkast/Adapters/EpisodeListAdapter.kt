@@ -30,12 +30,12 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
        }
        return  with(parent!!.context){
            linearLayout {
-               //setBackgroundColor(resources.getColor(R.color.colorAccent))
+               setBackgroundColor(resources.getColor(R.color.colorPrimary))
 
                 frameLayout {
 
                     imageView {
-                        loadUrl(episode.thumbnail)
+                      //  loadUrl(episode.thumbnail)
                         adjustViewBounds=true
                         scaleType= ImageView.ScaleType.FIT_XY
 
@@ -89,7 +89,7 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
 
                 lparams {
                     width= matchParent
-                    height= matchParent
+                    height= dip(68)
                     padding=dip(10)
                 }
                 setPadding(dip(16),dip(8),dip(16),dip(8))

@@ -7,6 +7,8 @@ import com.marlonjmoorer.odkast.Models.PodcastFeed
 import ninja.sakib.pultusorm.annotations.AutoIncrement
 import ninja.sakib.pultusorm.annotations.PrimaryKey
 import ninja.sakib.pultusorm.core.PultusORM
+import ninja.sakib.pultusorm.core.PultusORMCondition
+import ninja.sakib.pultusorm.core.PultusORMQuery
 import org.jetbrains.anko.db.*
 import java.util.*
 
@@ -51,9 +53,14 @@ class DbHelper(ctx: Context) {
 
     fun unSubscribe(id: String){
 
-        pultus?.delete(Subscription().apply {
-            show_id = id
-        })
+
+        val condition: PultusORMCondition = PultusORMCondition.Builder()
+                .eq("show_id",id)
+                .build()
+        pultus?.find(Subscription(),condition)?.firstOrNull()?.let {
+            pultus?.delete(it,condition)
+        }
+
         dbOberserver?.emitChange()
     }
 

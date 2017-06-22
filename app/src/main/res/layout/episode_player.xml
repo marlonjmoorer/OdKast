@@ -3,143 +3,102 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_display"
+    android:layout_marginTop="20dp"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/mini_player"
-        android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:background="@color/colorPrimaryDark"
-        android:gravity="center|top"
-        android:paddingBottom="5dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="5dp"
-        android:textSize="16sp">
-
-        <FrameLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <ImageView
-                android:id="@+id/mp_poster"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </FrameLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="4"
-            android:gravity="center_vertical"
-            android:layout_marginRight="8dp"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/mp_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="18dp" />
-
-            <TextView
-                android:id="@+id/mp_show_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:textSize="11dp" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/mp_play"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@drawable/icons8_play_filled" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="68dp"
-        android:gravity="center|top"
-        android:textSize="16sp"
-        android:visibility="gone">
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="5"
-            android:gravity="center_vertical"
-            android:orientation="vertical"
-            android:paddingLeft="16dp">
-
-            <TextView
-                android:id="@+id/ep_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textColor="@color/white"
-                android:textSize="24sp" />
-
-        </LinearLayout>
-
-        <ImageView
-            android:id="@+id/button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:src="@drawable/icons8_sort_down" />
-
-    </LinearLayout>
-
-    <ImageView
-        android:id="@+id/background"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        />
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="-8dp"
-        android:layout_weight=".7"
-        android:background="@color/colorPrimaryDark"
-        android:padding="16dp">
+        android:layout_weight="7"
+        android:clipChildren="false">
 
-        <TextView
-            android:id="@+id/elapsed"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:id="@+id/mini_player"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="left"
-            android:gravity="center"
-            android:text="00:00"
+            android:minHeight="68dp">
 
-            android:textColor="@color/white" />
+            <FrameLayout
+                android:id="@+id/frame"
+                android:layout_width="68dp"
+                android:layout_height="68dp"
+                android:minHeight="68dp"
+                android:minWidth="68dp"
+                android:padding="8dp">
 
-        <TextView
-            android:id="@+id/duration"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
+                <ImageView
+                    android:id="@+id/mp_poster"
 
-            android:layout_gravity="right"
-            android:gravity="center"
-            android:text="00:00"
-            android:textColor="@color/white" />
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:srcCompat="@drawable/icons8_add_filled" />
+            </FrameLayout>
+
+            <LinearLayout
+                android:id="@+id/header_view"
+                android:layout_width="match_parent"
+                android:layout_height="68dp"
+                android:layout_toEndOf="@+id/frame">
+
+                <LinearLayout
+
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="8dp"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:minHeight="68dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/mp_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="place"
+                        android:textColor="@color/white"
+                        android:textSize="18dp" />
+
+                    <TextView
+                        android:id="@+id/mp_show_title"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="place"
+                        android:textColor="@color/white"
+                        android:textSize="11dp" />
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="68dp"
+                    android:layout_weight=".85"
+                    android:padding="16dp">
+                    <Button
+                        android:id="@+id/mp_play"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+
+                        android:background="@drawable/icons8_play_filled" />
+                </FrameLayout>
+
+
+            </LinearLayout>
+
+
+        </RelativeLayout>
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="2"
+
+        android:orientation="vertical">
 
         <SeekBar
             android:id="@+id/seekBar"
@@ -150,10 +109,68 @@
 
         <LinearLayout
             android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8px">
+
+            <TextView
+                android:id="@+id/elapsed"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+               android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="00:00"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/duration"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:text="00:00"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8px"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/ep_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/ep_show_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="TextView"
+                android:textSize="24sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:paddingTop="10dp">
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp">
 
 
             <ImageButton
@@ -179,7 +196,39 @@
                 android:layout_height="60dp"
                 android:background="@drawable/rounded_button"
                 android:src="@drawable/icons8_fast_forward_filled" />
+
         </LinearLayout>
+
+
+
     </RelativeLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <ImageButton
+            android:id="@+id/imageButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/icons8_add_filled"
+            android:background="@drawable/rounded_button"
+            />
+<LinearLayout
+    android:layout_width="0dp"
+    android:layout_height="match_parent"
+    android:layout_weight="5"
+    android:background="@null"
+    />
+        <ImageButton
+            android:id="@+id/imageButton2"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:srcCompat="@drawable/ic_more_vert_black_24dp"
+            android:background="@drawable/rounded_button"/>
+
+    </LinearLayout>
 
 </LinearLayout>

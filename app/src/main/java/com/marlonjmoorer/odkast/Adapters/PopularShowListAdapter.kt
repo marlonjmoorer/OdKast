@@ -1,11 +1,9 @@
 package com.marlonjmoorer.odkast.Adapters
 
-import android.app.Activity
-import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v7.widget.RecyclerView
-import android.text.Html
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -13,24 +11,20 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.PopupMenu
 import android.widget.TextView
-import com.marlonjmoorer.odkast.Helpers.DbObservable
 import com.marlonjmoorer.odkast.Helpers.OnPodcastSelectedLister
 import com.marlonjmoorer.odkast.Helpers.database
 import com.marlonjmoorer.odkast.Helpers.loadUrl
-import com.marlonjmoorer.odkast.Models.ShowSearchResult
 import com.marlonjmoorer.odkast.Models.TopPodcasts
 import com.marlonjmoorer.odkast.R
-import com.marlonjmoorer.odkast.ShowDetailActivity
 import org.jetbrains.anko.*
 import org.jetbrains.anko.cardview.v7.cardView
 import org.jetbrains.anko.sdk25.coroutines.onClick
-import java.util.*
 
 
 /**
  * Created by marlonmoorer on 6/10/17.
  */
-class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapter.ShowViewHolder>(), Observer {
+class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<PopularShowListAdapter.ShowViewHolder>(){
 
     private var result: TopPodcasts
 
@@ -46,17 +40,16 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
         with(holder!!) {
             thumbnail!!.loadUrl(show.artworkUrl100)
             title!!.text = show.name
-            var ctx = itemView.context as OnPodcastSelectedLister
-            itemView.onClick { v ->
 
+            var ctx = itemView.context as OnPodcastSelectedLister
+            itemView.onClick {
                 ctx.onShowSelected(show.id)
             }
-            menu?.onClick { v ->
+            menuBtn?.onClick { v ->
                 with(PopupMenu(itemView.context, v)) {
                     menuInflater.inflate(R.menu.show_menu, menu)
 
                     setOnMenuItemClickListener { item ->
-
                         when (item.itemId) {
                             R.id.subscribe -> {
                                 ctx.onSubscribe(show.id)
@@ -76,17 +69,10 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
                     }else{
                         menu.removeItem(R.id.unsubscribe)
                     }
-
-
                     show()
-
-
                 }
-
-
             }
         }
-
     }
 
     override fun getItemCount(): Int {
@@ -100,16 +86,15 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
         //var  _view = LayoutInflater.from(parent?.getContext()).inflate(R.layout.show_item, parent, false);
         var _view = with(parent!!.context) {
             relativeLayout {
-
                 backgroundResource = R.drawable.under_line
                 lparams {
-                    height = dip(80)
+                    height = dip(72)
                     width = matchParent
 
                     //bottomMargin=dip(4)
                 }
                 cardView {
-                    // setBackgroundColor(resources.getColor(R.color.black))
+                    setBackgroundColor(resources.getColor(R.color.colorPrimary))
                     elevation = dip(10).toFloat()
                     //backgroundResource=R.drawable.card_outline
                     linearLayout {
@@ -137,11 +122,11 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
                         //gravity = Gravity.CENTER
                         textView {
                             id = R.id.show_title
-                            textColor = resources.getColor(R.color.black)
-                            textSize = 16f
+                            textColor = resources.getColor(R.color.white)
+                            textSize = 19f
                             maxLines = 3
                             padding = dip(8)
-                            //gravity = Gravity.CENTER
+                            gravity = Gravity.CENTER_VERTICAL
                             //  setBackgroundColor(resources.getColor(R.color.green_400))
                         }.lparams {
 
@@ -154,13 +139,12 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
                         imageButton {
                             id = R.id.overflow_menu
                             imageResource = R.drawable.icons8_menu_2
-                            background = null
+                            background=resources.getDrawable(R.drawable.icons8_play_filled)
 
                         }.lparams {
-                            height = dip(20)
-                            width = dip(30)
-                            gravity = Gravity.BOTTOM or Gravity.END
-                            bottomMargin = dip(8)
+                            width = 0
+                            height = matchParent
+                            weight = 1f
                         }
                     }
                 }.lparams {
@@ -174,10 +158,7 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
 
     }
 
-    override fun update(o: Observable?, arg: Any?) {
 
-        // notifyItemChanged()
-    }
 
 
     inner class ShowViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -185,14 +166,14 @@ class ShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<ShowListAdapte
 
         var title: TextView? = null
         var thumbnail: ImageView? = null
-        var menu: ImageButton? = null
+        var menuBtn: ImageButton? = null
         var description: TextView? = null
 
         init {
             title = view.find<TextView>(R.id.show_title)
             thumbnail = view.find<ImageView>(R.id.show_image)
             //  description = view.find<TextView>(R.id.show_discription)
-            menu = view.find<ImageButton>(R.id.overflow_menu)
+            menuBtn = view.find<ImageButton>(R.id.overflow_menu)
         }
     }
 }

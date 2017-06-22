@@ -113,19 +113,19 @@ fun View.loadingScreen(boolean: Boolean){
        if (boolean)
            this.addView(loading)
         else{
-           find<RelativeLayout>(R.id.loading_overlay)?.let {  this.removeView(it)}
+           findViewById(R.id.loading_overlay)?.let {  this.removeView(it)}
        }
     }
 }
 
 
 private fun loadingUI(context: Context)= with(context){
-    relativeLayout {
+    frameLayout{
         id= R.id.loading_overlay
         backgroundColor= resources.getColor(R.color.black)
 
 
-        gravity=Gravity.CENTER
+        //gravity=Gravity.CENTER
         progressBar{
             isIndeterminate=true
         }.lparams{

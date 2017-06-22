@@ -16,7 +16,7 @@
             android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:contentScrim="@color/colorPrimary"
+            app:contentScrim="@color/colorAccent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:layout_collapseMode="pin">
 
@@ -39,7 +39,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="2"
-                    android:background="@color/white"
+                    android:background="@color/colorPrimaryDark"
 
                     />
 
@@ -64,7 +64,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:background="@color/colorPrimaryLight"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        android:scrollbars="vertical"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -74,6 +77,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
                 android:orientation="vertical"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
@@ -84,13 +88,15 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="16dp"
+                    android:textColor="@color/colorPrimaryLight"
                     android:text="TextView" />
             </LinearLayout>
             <ListView
+
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/episode_listview"
-                android:scrollbars="vertical"/>
+                android:scrollbars="none"/>
         </LinearLayout>
 
 
@@ -106,7 +112,7 @@
         android:layout_height="match_parent"
         android:background="@color/white"
         android:gravity="center"
-        android:visibility="gone">
+        android:visibility="invisible">
 
         <ProgressBar
             android:layout_width="75dp"
