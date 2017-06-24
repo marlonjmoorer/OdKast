@@ -33,7 +33,7 @@ class SubscriptionFragment : Fragment(),Observer {
     private fun getUI(container: ViewGroup): View? = with(container) {
 
         verticalLayout {
-            setBackgroundColor(resources.getColor(R.color.colorPrimary))
+            setBackgroundColor(resources.getColor(R.color.black))
             subListView = recyclerView {
 
 
@@ -67,14 +67,12 @@ class SubscriptionFragment : Fragment(),Observer {
                     var ids = subs.map {
                         (it as Subscription).show_id
                     }
-
                     var shows = PodcastSearch().GetShowByManyIds(ids.joinToString(","))
                     uiThread {
                         shows?.let {
-
                             var adapter=SubscriptionAdapter(shows)
                             subListView?.adapter=adapter
-                            subListView?.layoutManager=GridLayoutManager(activity,2)
+                            subListView?.layoutManager=GridLayoutManager(activity,3)
 
                         }
                     }

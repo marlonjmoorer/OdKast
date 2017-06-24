@@ -7,6 +7,7 @@
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/black"
         android:orientation="vertical"
 
         >
@@ -29,14 +30,15 @@
 
                     <FrameLayout
                         android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
+
                         android:padding="8dp">
 
                         <ImageView
                             android:id="@+id/detail_image"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content" />
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
 
                     </FrameLayout>
 
@@ -72,8 +74,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="16dp"
-
-                        android:text="texdsfsdfsfsfs" />
+                        android:text="texdsfsdfsfsfs"
+                        android:textColor="@color/white" />
 
                 </ScrollView>
 
@@ -87,6 +89,7 @@
             android:layout_margin="16dp"
             android:clickable="true"
             android:src="@drawable/icons8_play_filled"
+            app:backgroundTint="@color/colorAccent"
             app:layout_anchor="@id/main"
             app:layout_anchorGravity="bottom|right|end" />
     </android.support.design.widget.CoordinatorLayout>

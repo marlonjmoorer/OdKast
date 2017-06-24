@@ -1,9 +1,6 @@
 package com.marlonjmoorer.odkast.Services
 
-import android.app.Notification
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.media.AudioManager
@@ -12,8 +9,10 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import android.widget.RemoteViews
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.NotificationTarget
 import com.marlonjmoorer.odkast.R
-import com.squareup.picasso.Picasso
+
 import java.util.*
 
 
@@ -159,9 +158,15 @@ class MediaService : Service(),MediaPlayer.OnPreparedListener, MediaPlayer.OnErr
                 .setContent(remoteView)
                 .build()
 
-        Picasso.with(this)
+
+
+        var target= NotificationTarget(this, R.id.note_poster,remoteView,notification, NOTIFICATION_ID)
+
+        Glide.with(this)
+                .asBitmap()
                 .load(nowPlaying?.imageUrl)
-                .into(remoteView, R.id.note_poster, NOTIFICATION_ID, notification)
+                .into(target)
+
 
         return notification
 

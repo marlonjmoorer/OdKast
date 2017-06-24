@@ -45,12 +45,12 @@ class PodcastSearch {
 
     fun GetTopPodcast():TopPodcasts{
         var json= URL(rssUrl.toString()).readText()
-        return  Util.parseJson<TopPodcasts>(json)
+        return  json.parseTo<TopPodcasts>()
     }
     fun GetShowById(id:String): SearchResults.ResultItem? {
         var url= baseApiUrl { it.appendEncodedPath("lookup").appendQueryParameter("id",id) }
         var json =URL(url).readText()
-        return  Util.parseJson<SearchResults>(json).results.first()
+        return json.parseTo<SearchResults>().results.first()
     }
 
     fun GetShowByManyIds(idList:String): SearchResults {
@@ -58,7 +58,7 @@ class PodcastSearch {
         var json = URL(url).readText()
 
 
-        return Util.parseJson<SearchResults>(json)
+        return   json.parseTo<SearchResults>()
     }
     fun getPodcastFeed(url:String):PodcastFeed{
         var url= Uri.Builder()
@@ -70,7 +70,7 @@ class PodcastSearch {
                 .build()
                 .toString()
         var json= URL(url).readText()
-        return Util.parseJson<PodcastFeed>(json)
+        return json.parseTo<PodcastFeed>()
     }
 
     fun SearchShows(query:String): SearchResults {
@@ -82,7 +82,7 @@ class PodcastSearch {
         }
         var json =URL(url).readText()
 
-        return  Util.parseJson<SearchResults>(json)
+        return  json.parseTo<SearchResults>()
     }
     fun SearchShowsByGenre(genre: Genre): SearchResults {
         //https://itunes.apple.com/search?term
@@ -95,7 +95,7 @@ class PodcastSearch {
         }
         var json =URL(url).readText()
 
-        return  Util.parseJson<SearchResults>(json)
+        return  json.parseTo<SearchResults>()
     }
 
 }

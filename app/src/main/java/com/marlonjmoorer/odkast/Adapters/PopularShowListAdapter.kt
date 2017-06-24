@@ -38,6 +38,7 @@ class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<Popular
         var show = result.feed.results[position]
 
         with(holder!!) {
+            var isSubbed= itemView.context.database.subsciptions?.contains(show.id)!!
             thumbnail!!.loadUrl(show.artworkUrl100)
             title!!.text = show.name
 
@@ -45,8 +46,15 @@ class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<Popular
             itemView.onClick {
                 ctx.onShowSelected(show.id)
             }
+            menuBtn?.imageResource= if(isSubbed) R.drawable.icons8_checked_checkbox_filled else R.drawable.icons8_add_filled
             menuBtn?.onClick { v ->
-                with(PopupMenu(itemView.context, v)) {
+                if (isSubbed){
+                    ctx.onUnSubscribe(show.id)
+                }else{
+                    ctx.onSubscribe(show.id)
+                }
+                notifyItemChanged(position)
+                /*with(PopupMenu(itemView.context, v)) {
                     menuInflater.inflate(R.menu.show_menu, menu)
 
                     setOnMenuItemClickListener { item ->
@@ -64,13 +72,13 @@ class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<Popular
                         }
                         false
                     }
-                    if(itemView.context.database.subsciptions?.contains(show.id)!!){
+                    if(!isSubbed){
                         menu.removeItem(R.id.subscribe)
                     }else{
                         menu.removeItem(R.id.unsubscribe)
                     }
                     show()
-                }
+                }*/
             }
         }
     }
@@ -91,10 +99,10 @@ class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<Popular
                     height = dip(72)
                     width = matchParent
 
-                    //bottomMargin=dip(4)
+
                 }
                 cardView {
-                    setBackgroundColor(resources.getColor(R.color.colorPrimary))
+                    setBackgroundColor(resources.getColor(R.color.black))
                     elevation = dip(10).toFloat()
                     //backgroundResource=R.drawable.card_outline
                     linearLayout {
@@ -127,7 +135,7 @@ class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<Popular
                             maxLines = 3
                             padding = dip(8)
                             gravity = Gravity.CENTER_VERTICAL
-                            //  setBackgroundColor(resources.getColor(R.color.green_400))
+
                         }.lparams {
 
                             width = 0
@@ -136,16 +144,32 @@ class PopularShowListAdapter(result: TopPodcasts) : RecyclerView.Adapter<Popular
                         }
 
 
-                        imageButton {
-                            id = R.id.overflow_menu
-                            imageResource = R.drawable.icons8_menu_2
-                            background=resources.getDrawable(R.drawable.icons8_play_filled)
+                        frameLayout {
+
+                            imageButton {
+                                id = R.id.overflow_menu
+                                imageResource = R.drawable.icons8_menu_2
+                               //backgroundColor=resources.getColor(R.color.white)
+                                background=null
+                                adjustViewBounds = true
+                                scaleType = ImageView.ScaleType.FIT_XY
+
+
+                            }.lparams {
+                                width = wrapContent
+                                height = wrapContent
+                            }
+
 
                         }.lparams {
                             width = 0
                             height = matchParent
-                            weight = 1f
+                            weight = .9f
+                            padding=dip(8)
                         }
+
+
+
                     }
                 }.lparams {
                     height = matchParent

@@ -30,12 +30,12 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
        }
        return  with(parent!!.context){
            linearLayout {
-               setBackgroundColor(resources.getColor(R.color.colorPrimary))
+               setBackgroundColor(resources.getColor(R.color.black))
 
                 frameLayout {
 
                     imageView {
-                      //  loadUrl(episode.thumbnail)
+                        loadUrl(episode.thumbnail)
                         adjustViewBounds=true
                         scaleType= ImageView.ScaleType.FIT_XY
 
@@ -54,6 +54,7 @@ class EpisodeListAdapter(feed:PodcastFeed):BaseAdapter() {
                    textView {
                        text=episode.title
                        maxLines=1
+                       textColor=resources.getColor(R.color.white)
                    }.lparams {
                        width= matchParent
                        height=0

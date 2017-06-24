@@ -9,7 +9,6 @@ import com.marlonjmoorer.odkast.Helpers.Genre
 import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.loadUrl
 import com.marlonjmoorer.odkast.Models.SearchResults
-import com.marlonjmoorer.odkast.Models.TrendingPodcast
 import com.marlonjmoorer.odkast.R
 import org.jetbrains.anko.*
 
@@ -50,14 +49,32 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
 
         return  with(parent!!.context){
           linearLayout {
-              setBackgroundColor(resources.getColor(R.color.colorPrimary))
+              setBackgroundColor(resources.getColor(R.color.black))
               lparams{
                   width= matchParent
                   height= matchParent
               }
+              frameLayout {
+                  imageView {
+                      //gravity= Gravity.CENTER_VERTICAL
+                      imageResource=group?.genre?.imageResource()?:R.drawable.icons_left_4
+                      adjustViewBounds=true
+                      scaleType= ImageView.ScaleType.CENTER_INSIDE
+
+                  }.lparams{
+                      height= matchParent
+                      width= matchParent
+                  }
+              }.lparams{
+                  padding=dip(8)
+                  height= matchParent
+                  width=0
+                  weight=1F
+              }
+
               textView {
                   gravity= Gravity.CENTER_VERTICAL
-                  text=group?.genre?.name
+                  text=group?.genre?.displayname()
                   textColor=resources.getColor(R.color.colorPrimaryLight)
 
               }.lparams{
@@ -81,7 +98,8 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
                   //paddingLeft = dip(24)
                   //paddingRight = dip(24)
               }
-              setPadding(dip(24),0,dip(24),0)
+              setPadding(dip(1),0,dip(1),0)
+
           }
       }
     }
@@ -106,7 +124,7 @@ class CategoriesListAdapter():BaseExpandableListAdapter(){
             linearLayout {
                 lparams(height= dip(64), width = matchParent)
                 setPadding(dip(8),dip(8),dip(8),dip(8))
-                setBackgroundColor(resources.getColor(R.color.colorPrimaryLight))
+                setBackgroundColor(resources.getColor(R.color.colorPrimaryDark))
 
 
                 frameLayout {

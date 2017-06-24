@@ -10,15 +10,22 @@ import android.view.ViewGroup
 import com.marlonjmoorer.odkast.Adapters.PopularShowListAdapter
 import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.Helpers.asycHandler
+import com.marlonjmoorer.odkast.Helpers.database
 import com.marlonjmoorer.odkast.R
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import java.util.*
 
 
 /**
  * Created by marlonmoorer on 5/29/17.
  */
-class TopShowsFragment : Fragment() {
+class TopShowsFragment : Fragment(), Observer {
+
+    override fun update(o: Observable?, arg: Any?) {
+        loadItems()
+    }
+
     var  _view: View?=null
     var showListView:RecyclerView?=null
 
@@ -46,27 +53,25 @@ class TopShowsFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val linearLayoutManager = LinearLayoutManager(activity!!);
+        loadItems()
+    }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        activity.database.onUpdate(this)
+    }
 
+    private fun loadItems(){
         doAsync(asycHandler()){
 
-            //var ai=AudioSearch.getInstance(context)
-            var searchResult=  PodcastSearch().GetTopPodcast() //ai.GetTopShows()
+
+            var searchResult=  PodcastSearch().GetTopPodcast()
             uiThread {
 
-                showListView?.adapter = PopularShowListAdapter(searchResult)//PodcastGridAdapter(searchResult)
-                showListView?.setLayoutManager(linearLayoutManager);
+                showListView?.adapter = PopularShowListAdapter(searchResult)
+                showListView?.setLayoutManager(LinearLayoutManager(activity!!));
                 showListView?.setHasFixedSize(true);
-
-
-               /* grid.onItemClick { parent, view, position, id ->
-                   var show= grid.adapter.getItem(position) as ShowSearchResult.ResultsBean
-                    this@TopShowsFragment.startActivityForResult<ShowDetailActivity>(0,ShowDetailActivity.id_key to show.id)
-                }*/
             }
         }
-
-
     }
 }

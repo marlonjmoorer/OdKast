@@ -13,6 +13,7 @@ import android.text.Html
 import android.view.*
 import android.widget.*
 import com.marlonjmoorer.odkast.Adapters.EpisodeListAdapter
+import com.marlonjmoorer.odkast.Fragments.EpisodeDetailFragment
 import com.marlonjmoorer.odkast.Helpers.*
 import com.marlonjmoorer.odkast.Models.PodcastFeed
 import com.marlonjmoorer.odkast.Models.SearchResults
@@ -42,7 +43,7 @@ class ShowDetailFragment : DialogFragment() {
     private var toolbar: Toolbar? = null
     private var image: ImageView? = null
     private var episodeListView: ListView? = null
-    // private  var title:TextView?=null
+
     private var description: TextView? = null
     private var loadingView: View? = null
     private var listener: OnPodcastSelectedLister? = null
@@ -81,7 +82,7 @@ class ShowDetailFragment : DialogFragment() {
            //contentView?.loadingScreen(true)
             var id = arguments.getString(id_key)
             doAsync(asycHandler()) {
-                show = PodcastSearch().GetShowById(id) //ai.GetShowById(id)
+                show = PodcastSearch().GetShowById(id)
                 var feed = PodcastSearch().getPodcastFeed(show?.feedUrl!!)
 
 
@@ -90,7 +91,6 @@ class ShowDetailFragment : DialogFragment() {
 
                     collapsingToolbar?.title = show?.collectionName
 
-                    collapsingToolbar?.setStatusBarScrimColor(resources.getColor(R.color.red_500))
                     image?.loadUrl(show?.artworkUrl600!!)
 
                     episodeListView?.adapter = EpisodeListAdapter(feed)
@@ -100,12 +100,13 @@ class ShowDetailFragment : DialogFragment() {
 
                         var episode = parent?.getItemAtPosition(position) as PodcastFeed.EpisodeItem
 
-
-                        buidDialog(episode).show()
+                        EpisodeDetailFragment(episode).show(fragmentManager,"")
+                        true
+                        //buidDialog(episode).show()
                     }
                     description?.text = Html.fromHtml(feed.feed.description)
                     loadingView?.visibility = View.GONE
-                    //contentView?.loadingScreen(false)
+
                 }
 
 

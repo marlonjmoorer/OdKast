@@ -31,8 +31,6 @@ import org.jetbrains.anko.design.longSnackbar
 import android.view.animation.ScaleAnimation
 
 
-
-
 class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
 
     private var slidePanel: SlidingUpPanelLayout? = null
@@ -68,9 +66,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        database.pultus?.let {
-          //  it.delete(Subscription())
-        }
+
 
 
         var toolbar = find<Toolbar>(R.id.toolbar)
@@ -83,8 +79,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
         seekBar = find<SeekBar>(R.id.seekBar)
         elapsedText = find<TextView>(R.id.elapsed)
         durationText = find<TextView>(R.id.duration)
-        ep_view = findViewById(R.id.ep_view)
-       // var mini_poster=find<ImageView>(R.id.mp_poster)
+        ep_view = findViewById(R.id.display)
 
 
 
@@ -95,42 +90,22 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
         viewPager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(viewPager)
 
-
+        slidePanel?.panelHeight = 0
 
         slidePanel?.addPanelSlideListener(object : SlidingUpPanelLayout.PanelSlideListener {
 
 
             override fun onPanelSlide(panel: View?, slideOffset: Float) {
 
-                headerView?.fade(1-(slideOffset*2))
-               // mini_player?.fade(1 - (slideOffset))
-               //header!!.fade(slideOffset)
-                var frame= findViewById(R.id.frame)
-                //with(mini_poster){
+                headerView?.fade(1 - (slideOffset * 2))
+                // mini_player?.fade(1 - (slideOffset))
+                //header!!.fade(slideOffset)
+                var frame = findViewById(R.id.frame)
 
-                   /*val anim = ScaleAnimation(
-                            mini_poster.scaleX*(1+slideOffset)
-                            , mini_poster.scaleX
-                            ,mini_poster.scaleY*(1+slideOffset)
-                            ,mini_poster.scaleY
-                            , Animation.ABSOLUTE, 0f
-                            , Animation.ABSOLUTE, 0f) // Pivot point of Y scaling
-                    anim.fillAfter = true // Needed to keep the result of the animation
-                    mini_poster.startAnimation(anim)
-                    */
-                    frame.pivotX=0f
-                    frame.pivotY=0f
-                    frame?.scaleX=(slideOffset*5)+(1f)
-                    frame?.scaleY=(slideOffset*5)+(1f)
-
-
-                  //  frame.animate().setDuration(1).scaleX(slideOffset+(1f))
-                   // frame.animate().setDuration(1).scaleY(slideOffset+(1f))
-                 //  var params= FrameLayout.LayoutParams()
-                   // params.width=(width*slideOffset).toInt()
-                   // params.height=(height*slideOffset).toInt()
-                   // mini_poster.layoutParams=params
-               //}
+                frame.pivotX = 0f
+                frame.pivotY = 0f
+                frame?.scaleX = (slideOffset * 5) + (1f)
+                frame?.scaleY = (slideOffset * 5) + (1f)
 
             }
 
@@ -163,13 +138,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
     }
 
 
-    override fun onNewIntent(intent: Intent?) {
-        if (intent?.hasExtra("ep") == true) {
-            var ep = intent.getStringExtra("ep").parseTo<PodcastFeed.EpisodeItem>()
-            this.setUpPlayback(ep)
-            slidePanel?.expand()
-        }
-    }
+
 
     override fun onStart() {
         super.onStart()
@@ -179,7 +148,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
     }
 
     override fun onBackPressed() {
-        // contentView?.loadingScreen(false)
+
         when (slidePanel?.panelState) {
             PanelState.EXPANDED -> slidePanel?.collapse()
             else -> super.onBackPressed()
@@ -187,6 +156,8 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
     }
 
     private fun setUpPlayback(episode: PodcastFeed.EpisodeItem) {
+        slidePanel?.panelHeight = dip(68)
+
         with(episode) {
             if (mediaPlayer?.isPlaying!!) {
                 mediaService?.play_pause()
@@ -199,7 +170,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
             find<ImageView>(R.id.mp_poster)?.loadUrl(thumbnail)
             find<TextView>(R.id.mp_title)?.text = title
             find<TextView>(R.id.ep_title)?.text = title
-            find<TextView>(R.id.ep_show_title)?.text=""
+            find<TextView>(R.id.ep_show_title)?.text = ""
 
             //contentView?.loadingScreen(true)
             doAsync(asycHandler()) {
@@ -213,9 +184,8 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
                     elapsedText?.text = 0.toTime()
                     durationText?.text = mediaPlayer?.duration!!.toTime()
 
-                     var mini_poster=find<ImageView>(R.id.mp_poster)
+                    var mini_poster = find<ImageView>(R.id.mp_poster)
                     mini_poster.loadUrl(thumbnail)
-
                 }
             }
 
@@ -230,7 +200,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
                 mediaService?.play_pause()
 
             }
-            ep_view?.visibility = View.VISIBLE
+
 
         }
     }
@@ -250,9 +220,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
 
                 seekBar?.setProgress(mediaPlayer?.getCurrentPosition() ?: 0)
                 elapsedText?.text = "${mediaPlayer?.getCurrentPosition()?.toTime()}"
-                //seekBar?.setProgress(mediaPlayer?.getCurrentPosition()?:0)
-                //elapsedText?.text= mediaPlayer?.getCurrentPosition()?.toTime()
-                //toast("Nope")
+
             }
 
         }
@@ -301,8 +269,6 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
         val inflater = menuInflater
 
         inflater.inflate(R.menu.menu_main, menu)
-
-
         return true
     }
 
@@ -330,7 +296,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
 
         database.subscribe(id)
 
-        longSnackbar(contentView!!, "Subcribed", "Undo", { v ->
+        longSnackbar(contentView!!, "Subscribed", "Undo", { v ->
             database.unSubscribe(id)
             longSnackbar(contentView!!, "Unsubscribed")
         })
@@ -338,7 +304,7 @@ class MainActivity : AppCompatActivity(), Observer, OnPodcastSelectedLister {
 
     override fun onUnSubscribe(id: String) {
         database.unSubscribe(id)
-        longSnackbar(contentView!!, "UnSubcribed", "Undo", { v ->
+        longSnackbar(contentView!!, "UnSubscribed", "Undo", { v ->
             database.subscribe(id)
             longSnackbar(contentView!!, "Subscribed")
         })

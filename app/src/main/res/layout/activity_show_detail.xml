@@ -10,7 +10,7 @@
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme_2">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:id="@+id/collapsingToolbar"
@@ -18,7 +18,9 @@
             android:layout_height="match_parent"
             app:contentScrim="@color/colorAccent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
-            app:layout_collapseMode="pin">
+            app:layout_collapseMode="pin"
+            app:collapsedTitleTextAppearance="@style/CollapsedText"
+            app:expandedTitleTextAppearance="@style/ExpandedText">
 
 
             <LinearLayout
@@ -64,7 +66,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
-        android:background="@color/colorPrimaryLight"
+        android:background="@color/black"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:scrollbars="vertical"
         >
@@ -93,6 +95,7 @@
             </LinearLayout>
             <ListView
 
+                android:divider="@color/white"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/episode_listview"

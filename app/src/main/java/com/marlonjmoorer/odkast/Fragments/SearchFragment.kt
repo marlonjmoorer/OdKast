@@ -1,33 +1,19 @@
 package com.marlonjmoorer.odkast.Fragments
 
-import android.content.Intent
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.Toolbar
 import android.view.*
-import android.widget.ListView
-import android.widget.SearchView
 import com.marlonjmoorer.odkast.Adapters.PodcastListAdapter
 import com.marlonjmoorer.odkast.Helpers.PodcastSearch
 import com.marlonjmoorer.odkast.R
-import com.marlonjmoorer.odkast.ShowDetailActivity
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
-import org.jetbrains.anko.sdk25.coroutines.onItemClick
 import org.jetbrains.anko.uiThread
-import android.widget.Toast
-import com.marlonjmoorer.odkast.R.id.toolbar
-import org.jetbrains.anko.support.v4.longToast
-import android.support.v4.view.MenuItemCompat.expandActionView
-import android.support.v4.view.MenuItemCompat.getActionView
-import org.jetbrains.anko.sdk25.coroutines.onQueryTextListener
-import kotlin.coroutines.experimental.CoroutineContext
 
-import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import com.arlib.floatingsearchview.FloatingSearchView
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion
-import com.marlonjmoorer.odkast.Helpers.OnPodcastSelectedLister
-import org.jetbrains.anko.support.v4.act
 
 
 /**
@@ -36,7 +22,7 @@ import org.jetbrains.anko.support.v4.act
 
 
 class SearchFragment : Fragment() {
-    private var resultList: ListView? = null
+    private var resultList: RecyclerView? = null
     private var searchView: FloatingSearchView? = null
 
 
@@ -44,8 +30,9 @@ class SearchFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
         var view = inflater?.inflate(R.layout.activity_search, container, false)
-        resultList = view?.find<ListView>(R.id.results)
+        resultList = view?.find<RecyclerView>(R.id.results)
         searchView= view?.find<FloatingSearchView>(R.id.search_view)
+
         searchView?.setOnSearchListener(object:FloatingSearchView.OnSearchListener {
             override fun onSearchAction(currentQuery: String?) {
               currentQuery?.isNotEmpty()?.let { search(currentQuery) }
@@ -78,11 +65,13 @@ class SearchFragment : Fragment() {
             var adapter = PodcastListAdapter(results)
             uiThread {
                 resultList?.adapter = adapter
-                resultList?.onItemClick { parent, view, position, id ->
+                resultList?.layoutManager= LinearLayoutManager(activity)
+
+                /*resultList?.onItemClick { parent, view, position, id ->
                    var listener=activity as OnPodcastSelectedLister
                    var show= adapter.getItem(position)
                    listener.onShowSelected(show.collectionId.toString())
-                }
+                }*/
             }
         }
     }

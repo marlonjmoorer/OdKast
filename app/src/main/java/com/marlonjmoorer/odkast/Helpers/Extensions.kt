@@ -15,12 +15,13 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.RemoteViews
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.Target
+import com.github.salomonbrys.kotson.fromJson
+import com.google.gson.GsonBuilder
 import com.marlonjmoorer.odkast.R
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
 import com.sothree.slidinguppanel.SlidingUpPanelLayout.PanelState
-import com.squareup.picasso.OkHttpDownloader
-import com.squareup.picasso.Picasso
-import com.squareup.picasso.Target
 import org.jetbrains.anko.*
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -33,54 +34,22 @@ import java.util.concurrent.TimeUnit
  */
 fun ImageView.loadUrl(url: String) {
 
-
-    var builder =  Picasso.Builder(context);
-
-    builder.downloader(OkHttpDownloader(context));
     try {
-        builder.build().load(url).fit().into(this)
+
+        Glide.with(context)
+                .load(url)
+                .into(this);
     }
     catch (ex:Exception){
         print(ex.stackTrace.contentDeepToString())
     }
-
-    //  var ur=url.replace("https","http")
-    //Picasso.with(this.contex)
 
 }
 
 
-fun View.loadUrl2(url: String) {
+fun View.loadUrl(url: String) {
 
 
-    var builder =  Picasso.Builder(context)
-    var target= object:Target{
-        override fun onPrepareLoad(placeHolderDrawable: Drawable?) {
-          Log.e("","")
-        }
-
-        override fun onBitmapFailed(errorDrawable: Drawable?) {
-            this@loadUrl2.backgroundResource=R.drawable.icons8_add_filled
-        }
-
-        override fun onBitmapLoaded(bitmap: Bitmap?, from: Picasso.LoadedFrom?) {
-           this@loadUrl2.background= BitmapDrawable(bitmap)
-        }
-    }
-
-    this.setTag(this.id,target)
-    builder.downloader(OkHttpDownloader(context));
-    try {
-        var localTarget=getTag(this.id) as Target
-        builder.build().load(url).into(localTarget)
-
-    }
-    catch (ex:Exception){
-        print(ex.stackTrace.contentDeepToString())
-    }
-
-    //  var ur=url.replace("https","http")
-    //Picasso.with(this.context)
 
 
 }
@@ -157,30 +126,7 @@ fun View.fade(alpha:Float){
 
 }
 
-fun View.fadeOut(){
-    this.animate()
-            .alpha(0.0f)
-            .setDuration(500)
-            .setListener(object :AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    super.onAnimationEnd(animation)
-                    this@fadeOut.visibility=View.GONE
-                }
-            });
 
-}
-fun View.fadeIn(){
-    this.animate()
-            .alpha(1.0f)
-            .setDuration(500)
-            .setListener(object :AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    super.onAnimationEnd(animation)
-                    this@fadeIn.visibility=View.VISIBLE
-                }
-            });
-
-}
 
 fun Int.toShortTime():String{
     val millis=this.toLong()
@@ -206,17 +152,12 @@ fun Int.toTime():String{
     return buf.toString()
 }
 
-fun Notification.loadImage(url:String,resource:Int){
-
-
-    //var builder =  Picasso.Builder();
-
-   // builder.downloader(OkHttpDownloader(context));
-    try {
-      //  builder.build().load(url).fit().into(this,)
-    }
-    catch (ex:Exception){
-        print(ex.stackTrace.contentDeepToString())
-    }
-
+fun Any.toJsonString():String{
+    var gson = GsonBuilder().create()
+    return gson.toJson(this)
 }
+inline fun <reified T:Any>String.parseTo():T{
+    var gson = GsonBuilder().create()
+    return gson.fromJson<T>(this)
+}
+

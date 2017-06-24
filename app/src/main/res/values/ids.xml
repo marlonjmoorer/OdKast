@@ -7,4 +7,7 @@
     <item name="overflow_menu" type="id" />
     <item name="loading_overlay" type="id" />
     <item name="subscribed" type="id" />
+    <item name="item_image" type="id" />
+    <item name="item_title" type="id" />
+    <item name="item_action" type="id" />
 </resources>
